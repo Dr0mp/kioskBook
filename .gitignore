@@ -26,6 +26,10 @@ node_modules/
 package.json
 package-lock.json
 
+# Editor / agent local config
+.claude/
+.vscode/
+
 # OS / editor junk
 Thumbs.db
 .DS_Store
