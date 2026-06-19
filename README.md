@@ -1,5 +1,7 @@
 # Carte Touch — Interactive Kiosk Book
 
+![Carte Touch preview](preview.png)
+
 An offline, touchscreen "flip-book" application for kiosks. A set of page images is presented as a
 realistic **3D book** the visitor can browse by tapping/swiping.
 
