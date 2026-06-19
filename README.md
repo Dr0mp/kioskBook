@@ -110,11 +110,3 @@ GPLv3. Each library retains its own copyright and license; see the headers insid
 
 ---
 
-## License
-
-The application code in this repository (the viewer, scene logic, dev panel, PDF importer, and
-configuration) is released under the **GNU General Public License v3.0** — see [`LICENSE`](LICENSE).
-
-The bundled third-party libraries remain under their own permissive licenses (listed above).
-Page content (the book images) is **not** part of this repository and remains the property of its
-respective owner.
