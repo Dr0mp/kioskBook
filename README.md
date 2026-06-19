@@ -102,16 +102,17 @@ This project bundles the following open-source libraries (all served locally):
 | three.js `GLTFLoader`, `TransformControls` | bundled | Load `.glb` models / editor gizmos | MIT |
 | [pdf.js](https://mozilla.github.io/pdf.js/) | v3.x (`lib/pdf.min.js`) | Render PDF pages to images (importer) | Apache-2.0 (Mozilla) |
 
-All bundled libraries use permissive licenses (MIT / Apache-2.0), which are compatible with both
-proprietary and open-source (incl. GPLv3) distribution. Each library retains its own copyright and
-license; see the headers inside the files in `lib/`.
+All bundled libraries use permissive licenses (MIT / Apache-2.0), which are compatible with
+GPLv3. Each library retains its own copyright and license; see the headers inside the files in
+`lib/`.
 
 ---
 
-## Copyright
+## License
 
 The application code in this repository (the viewer, scene logic, dev panel, PDF importer, and
-configuration) is proprietary to the project owner. Page content (the book images) is the property
-of its respective owner. Third-party libraries are licensed separately as listed above.
+configuration) is released under the **GNU General Public License v3.0** — see [`LICENSE`](LICENSE).
 
-_Replace “[Project Owner / Client name]” with the actual owner before distribution._
+The bundled third-party libraries remain under their own permissive licenses (listed above).
+Page content (the book images) is **not** part of this repository and remains the property of its
+respective owner.
