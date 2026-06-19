@@ -27,6 +27,9 @@ Double-click one of the launch scripts (they start a tiny local web server and o
 Recommended browser: **Google Chrome** or **Microsoft Edge** (required for the PDF importer's
 save-to-folder feature).
 
+> **Requirements & installation:** see [`INSTALL.md`](INSTALL.md) — including what's needed if you
+> remove the bundled `python313/` server.
+
 ---
 
 ## How pages work
