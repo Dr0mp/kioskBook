@@ -58,12 +58,12 @@
 <nav>
   <h2>Cuprins</h2>
   <a href="#start">1. Pornirea kioskului</a>
-  <a href="#two">2. Cele două versiuni</a>
+  <a href="#two">2. Prezentare generală</a>
   <a href="#pages">3. Cum funcționează paginile</a>
   <a href="#editpages">4. Adăugare / înlocuire / ștergere</a>
   <a href="#pdf">5. Importarea unui PDF</a>
   <a href="#lang">6. Limbi</a>
-  <a href="#dev">7. Panoul de dezvoltare (3D)</a>
+  <a href="#dev">7. Panoul de dezvoltare</a>
   <a href="#deploy">8. Salvarea setărilor</a>
   <a href="#visitor">9. Ce fac vizitatorii</a>
   <a href="#trouble">10. Depanare</a>
@@ -85,11 +85,10 @@
 
 <!-- 1 -->
 <h2 class="sec" id="start">1. Pornirea kioskului</h2>
-<p>În folderul proiectului găsești două fișiere de pornire. Dă dublu-clic pe cel dorit:</p>
+<p>În folderul proiectului, dă dublu-clic pe fișierul de pornire:</p>
 <table>
   <tr><th>Fișier</th><th>Deschide</th><th>Adresă</th></tr>
   <tr><td><code>start.bat</code></td><td>Cartea <b>3D</b> (carte pe masă, răsfoire în 3D)</td><td><code>http://localhost:8080</code></td></tr>
-  <tr><td><code>start-light.bat</code></td><td>Cartea <b>light</b> (plată, mai rapidă, mai simplă)</td><td><code>http://localhost:8081/book-light.html</code></td></tr>
 </table>
 <p>Se deschide automat o fereastră de browser. Atinge (sau dă clic) pe <b>„Touch to Begin”</b> —
 cartea trece pe <b>tot ecranul</b> și pornește muzica de fundal.</p>
@@ -100,18 +99,18 @@ fișierul <code>.html</code> (dublu-clic), <u>nu</u> va funcționa corect — ec
 imagini nu se vor încărca.</div>
 
 <!-- 2 -->
-<h2 class="sec" id="two">2. Cele două versiuni</h2>
+<h2 class="sec" id="two">2. Prezentare generală</h2>
+<p>Kioskul este o singură <b>carte 3D</b> (<code>index.html</code>) care apare pe ecran ca o carte
+reală pe o masă. Pe scurt:</p>
 <table>
-  <tr><th></th><th>Cartea 3D (<code>index.html</code>)</th><th>Cartea light (<code>book-light.html</code>)</th></tr>
-  <tr><td><b>Aspect</b></td><td>Carte 3D realistă pe masă, cu obiecte (lampă, plantă…)</td><td>Plată, răsfoire clasică</td></tr>
-  <tr><td><b>Limbi</b></td><td>Engleză + Română (butoane pe ecran)</td><td>Doar Română</td></tr>
-  <tr><td><b>Panou de dezvoltare</b></td><td>Da (apasă <kbd>D</kbd>)</td><td>Nu</td></tr>
-  <tr><td><b>Import PDF</b></td><td>Da (în panoul dev)</td><td>—</td></tr>
-  <tr><td><b>Formate pagini</b></td><td>Imagini <b>și video</b> (MP4/WEBM)</td><td>Doar imagini</td></tr>
-  <tr><td><b>Prima pagină</b></td><td>Începe la <code>page-01</code></td><td>Începe la <code>page-02</code> (page-01 este ignorată)</td></tr>
+  <tr><th>Caracteristică</th><th>Detalii</th></tr>
+  <tr><td><b>Aspect</b></td><td>Carte 3D realistă pe masă, cu obiecte decorative (lampă, plantă…) și o vedere „attract” când e inactivă.</td></tr>
+  <tr><td><b>Limbi</b></td><td>Engleză + Română (butoane EN/RO pe ecran).</td></tr>
+  <tr><td><b>Panou de dezvoltare</b></td><td>Da — apasă <kbd>D</kbd> (cameră, iluminare, audio, vizual, navigare, import PDF).</td></tr>
+  <tr><td><b>Import PDF</b></td><td>Da — transformă un PDF în imagini de pagină (în panoul dev).</td></tr>
+  <tr><td><b>Formate pagini</b></td><td>Imagini (<code>.jpg/.jpeg/.png</code>) <b>și video</b> (<code>.mp4/.webm</code>).</td></tr>
+  <tr><td><b>Pagini</b></td><td>Citite în ordinea numerelor din folderele de pagini (vezi secțiunea următoare).</td></tr>
 </table>
-<p>Ambele versiuni citesc <b>aceleași foldere de pagini</b>, deci o pagină adăugată apare în
-amândouă (cu excepția page-01, pe care versiunea light o ignoră intenționat).</p>
 
 <!-- 3 -->
 <h2 class="sec" id="pages">3. Cum funcționează paginile</h2>
@@ -140,9 +139,8 @@ amândouă (cu excepția page-01, pe care versiunea light o ignoră intenționat
   <li><b>Un număr lipsă este OK</b> — cartea îl sare și continuă (tolerează până la <b>5 numere lipsă la rând</b> înainte de a considera că s-a terminat cartea).</li>
   <li>Pentru a <b>termina</b> cartea, oprește numerotarea — după 5 numere goale la rând se oprește căutarea.</li>
 </ul>
-<div class="note"><b>De ce cartea 3D începe la page-01, iar cea light la page-02?</b>
-Versiunea light este setată să ignore <code>page-01</code> intenționat (de ex. o copertă pe care
-doar versiunea 3D ar trebui să o arate). Tot ce e de la <code>page-02</code> în sus apare în amândouă.</div>
+<div class="note"><b>Sfat:</b> prima pagină (<code>page-01</code>) este coperta cărții. Paginile se
+încarcă în ordine de acolo.</div>
 
 <!-- 4 -->
 <h2 class="sec" id="editpages">4. Adăugare, înlocuire sau ștergere de pagini</h2>
@@ -165,11 +163,8 @@ renumerotezi totul.</p>
 <p>Fie renumerotezi fișierele următoare, fie ceri dezvoltatorului să activeze opțiunea „manifest”,
 care permite controlul ordinii exacte fără renumerotare.</p>
 
-<div class="warn"><b>După modificarea fișierelor, reîncarcă browserul:</b>
-<ul>
-  <li><b>Cartea light</b> — o reîncărcare normală (<kbd>F5</kbd>) este suficientă; încarcă mereu cele mai noi imagini.</li>
-  <li><b>Cartea 3D</b> — fă o <b>reîncărcare forțată</b>: <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd>. (O reîncărcare simplă poate arăta imaginea veche din cache.)</li>
-</ul></div>
+<div class="warn"><b>După modificarea fișierelor, reîncarcă browserul</b> cu o <b>reîncărcare forțată</b>:
+<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd>. (O reîncărcare simplă poate arăta imaginea veche din cache.)</div>
 <div class="tip"><b>Apare o pagină albă/goală?</b> Înseamnă că există un fișier imagine gol cu acel
 număr. Pur și simplu șterge acel fișier din folder.</div>
 
@@ -195,8 +190,7 @@ pagini goale, setează <b>From page</b> la prima pagină reală pentru ca să nu
 <h2 class="sec" id="lang">6. Limbi</h2>
 <ul>
   <li>Paginile stau în două foldere: <span class="path">assets/pages/en/</span> și <span class="path">assets/pages/ro/</span>.</li>
-  <li><b>Cartea 3D</b> afișează butoanele <b>EN / RO</b> pentru ca vizitatorii să poată schimba limba.</li>
-  <li><b>Cartea light</b> este <b>doar în Română</b>.</li>
+  <li>Cartea afișează butoanele <b>EN / RO</b> pentru ca vizitatorii să poată schimba limba.</li>
   <li>Limba cu care <b>pornește</b> kioskul este setată în fișierul de setări
       <span class="path">assets/user-config.json</span> (linia <code>"book-lang": "ro"</code>).
       Aceasta are mereu prioritate la pornire, deci kioskul se deschide sigur în limba aleasă.</li>
@@ -205,7 +199,7 @@ pagini goale, setează <b>From page</b> la prima pagină reală pentru ca să nu
 în Notepad și setează <code>"book-lang"</code> la <code>"ro"</code> sau <code>"en"</code>, apoi salvează.</div>
 
 <!-- 7 -->
-<h2 class="sec" id="dev">7. Panoul de dezvoltare (doar cartea 3D)</h2>
+<h2 class="sec" id="dev">7. Panoul de dezvoltare</h2>
 <p>Apasă <kbd>D</kbd> oricând pentru a deschide sau închide panoul. Apasă pe filele de sus pentru
 a schimba secțiunea. Mai jos este explicată fiecare setare. După ajustare, nu uita să apeși
 <b>Save All</b> (secțiunea 8) pentru a păstra modificările.</p>
@@ -309,7 +303,7 @@ a schimba secțiunea. Mai jos este explicată fiecare setare. După ajustare, nu
 <table>
   <tr><th>Problemă</th><th>Soluție</th></tr>
   <tr><td>O imagine veche apare în continuare după ce am înlocuit-o</td>
-      <td>Reîncărcare forțată a cărții 3D: <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd>. Cartea light se actualizează cu o reîncărcare normală.</td></tr>
+      <td>Fă o reîncărcare forțată: <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd>.</td></tr>
   <tr><td>Apare o pagină albă / goală</td>
       <td>Există un fișier imagine gol cu acel număr — șterge-l din folderul de pagini.</td></tr>
   <tr><td>Cartea se oprește mai devreme decât mă așteptam</td>
@@ -320,7 +314,7 @@ a schimba secțiunea. Mai jos este explicată fiecare setare. După ajustare, nu
       <td>Asigură-te că ai pornit cu fișierul <code>.bat</code>, nu deschizând direct HTML-ul.</td></tr>
   <tr><td>Convertorul PDF nu poate salva în folder</td>
       <td>Folosește Google Chrome sau Microsoft Edge.</td></tr>
-  <tr><td>Kioskul pare lent (3D)</td>
+  <tr><td>Kioskul pare lent</td>
       <td>În panoul dev → fila VISUAL, scade calitatea/efectele, apoi Save All.</td></tr>
 </table>
 
@@ -328,14 +322,13 @@ a schimba secțiunea. Mai jos este explicată fiecare setare. După ajustare, nu
 <h2 class="sec" id="cheat">11. Foaie rapidă de referință</h2>
 <table>
   <tr><th>Vreau să…</th><th>Fac asta</th></tr>
-  <tr><td>Pornesc cartea 3D</td><td>Dublu-clic pe <code>start.bat</code></td></tr>
-  <tr><td>Pornesc cartea light</td><td>Dublu-clic pe <code>start-light.bat</code></td></tr>
-  <tr><td>Deschid / închid uneltele dev</td><td>Apasă <kbd>D</kbd> (cartea 3D)</td></tr>
+  <tr><td>Pornesc cartea</td><td>Dublu-clic pe <code>start.bat</code></td></tr>
+  <tr><td>Deschid / închid uneltele dev</td><td>Apasă <kbd>D</kbd></td></tr>
   <tr><td>Adaug pagini</td><td>Pun <code>page-NN.jpg</code> în <span class="path">assets/pages/ro/</span></td></tr>
   <tr><td>Convertesc un PDF</td><td>Panoul dev → fila <b>PDF</b></td></tr>
   <tr><td>Schimb limba de pornire</td><td>Editez <code>"book-lang"</code> în <code>assets/user-config.json</code></td></tr>
   <tr><td>Fac setările permanente</td><td>Dev → <b>Save All</b> → <b>Export Config</b> → înlocuiesc <code>assets/user-config.json</code></td></tr>
-  <tr><td>Reîncarc după modificări</td><td><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd> (3D), <kbd>F5</kbd> (light)</td></tr>
+  <tr><td>Reîncarc după modificări</td><td><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd></td></tr>
 </table>
 
 <footer>

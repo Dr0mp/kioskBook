@@ -10,8 +10,8 @@ The kiosk is a set of static files served by a tiny **local** web server (it mus
 | Requirement | Details |
 |-------------|---------|
 | **Operating system** | Windows 10 / 11 (the launchers are `.bat` files; the no-install server uses built-in Windows PowerShell). |
-| **Browser** | **Google Chrome** or **Microsoft Edge**, recent version. Needed for WebGL (3D book), fullscreen, and the PDF importer's save-to-folder feature. |
-| **Graphics** | A GPU with **WebGL** for the **3D book** (`index.html`). The **light book** (`book-light.html`) runs on almost any hardware. |
+| **Browser** | **Google Chrome** or **Microsoft Edge**, recent version. Needed for WebGL, fullscreen, and the PDF importer's save-to-folder feature. |
+| **Graphics** | A GPU with **WebGL** (the book renders in 3D via `index.html`). |
 | **Local web server** | Required to serve the files — **see section 2**. With the bundled Python included, there is **nothing to install**. |
 | **Disk** | A few hundred MB for the app + your page images. |
 
@@ -19,8 +19,7 @@ The kiosk is a set of static files served by a tiny **local** web server (it mus
 
 ## 2. The local web server (how it's provided)
 
-The launch scripts (`start.bat`, `start-light.bat`) automatically pick the first available
-option, in this order:
+The launch script (`start.bat`) automatically picks the first available option, in this order:
 
 1. **Bundled Python** — `python313/` (shipped with the project) → *nothing to install*
 2. **System Python** — if `python` / `python3` is on the machine
@@ -37,25 +36,24 @@ Node.js installed**.
 The `python313/` folder (~21 MB) is included only so the kiosk is fully self-contained. **You can
 delete it** to slim things down — here's what then applies:
 
-- ✅ **It still runs on Windows** with **no install**, via the PowerShell fallback (`server.ps1`).
-  Both launchers pass the correct port to it automatically (3D → 8080, light → 8081), so each book
-  works on its own address.
+- ✅ **It still runs on Windows** with **no install**, via the PowerShell fallback (`server.ps1`,
+  port 8080).
 - Optional installs (only if you prefer the Python/Node server options 2–3 above):
   - **Python 3** ([python.org](https://www.python.org/downloads/)) — tick *“Add Python to PATH”*.
   - **Node.js** ([nodejs.org](https://nodejs.org/)) — LTS version.
 
-> Note: this only concerns the *web server*. The app's own libraries (three.js, turn.js, pdf.js,
-> jQuery) are **bundled** in `lib/` and `trunjs4/` and are **not** something you install.
+> Note: this only concerns the *web server*. The app's own libraries (three.js, pdf.js) are
+> **bundled** in `lib/` and are **not** something you install.
 
 ---
 
 ## 4. Installing on a kiosk PC
 
 1. **Copy** the whole project folder to the kiosk computer.
-2. **Add page images** to `assets/pages/ro/` (and `assets/pages/en/` if you use English in the 3D
-   book), named `page-01.jpg`, `page-02.jpg`, … (see `admin-guide.html`).
+2. **Add page images** to `assets/pages/ro/` (and `assets/pages/en/` for English), named
+   `page-01.jpg`, `page-02.jpg`, … (see `admin-guide.html`).
 3. *(Optional)* set the default language / look in `assets/user-config.json`.
-4. **Double-click** `start.bat` (3D) or `start-light.bat` (light). A browser opens automatically.
+4. **Double-click** `start.bat`. A browser opens automatically.
 5. Tap **“Touch to Begin”** — it goes fullscreen.
 
 ---
@@ -67,8 +65,7 @@ delete it** to slim things down — here's what then applies:
 - **Auto-start on boot:** put a shortcut to the `.bat` in the Windows *Startup* folder
   (`shell:startup`) or schedule it with Task Scheduler.
 - **Disable** sleep, screensaver, and Windows notifications on the kiosk.
-- The light book returns to the "Touch to Begin" screen after **5 minutes** of inactivity; the 3D
-  book has its own idle "attract" camera mode.
+- When idle, the book eases into an "attract" camera view automatically.
 
 ---
 

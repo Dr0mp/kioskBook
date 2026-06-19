@@ -60,12 +60,12 @@
 <nav>
   <h2>Contents</h2>
   <a href="#start">1. Starting the kiosk</a>
-  <a href="#two">2. The two versions</a>
+  <a href="#two">2. Overview</a>
   <a href="#pages">3. How pages work</a>
   <a href="#editpages">4. Add / replace / remove pages</a>
   <a href="#pdf">5. Import a PDF</a>
   <a href="#lang">6. Languages</a>
-  <a href="#dev">7. Developer panel (3D)</a>
+  <a href="#dev">7. Developer panel</a>
   <a href="#deploy">8. Saving your settings</a>
   <a href="#visitor">9. What visitors do</a>
   <a href="#trouble">10. Troubleshooting</a>
@@ -87,11 +87,10 @@
 
 <!-- 1 -->
 <h2 class="sec" id="start">1. Starting the kiosk</h2>
-<p>In the project folder you'll find two start files. Double-click the one you want:</p>
+<p>In the project folder, double-click the start file:</p>
 <table>
   <tr><th>File</th><th>Opens</th><th>Address</th></tr>
   <tr><td><code>start.bat</code></td><td>The <b>3D book</b> (book on a table, page-flip in 3D)</td><td><code>http://localhost:8080</code></td></tr>
-  <tr><td><code>start-light.bat</code></td><td>The <b>light book</b> (flat, faster, simpler)</td><td><code>http://localhost:8081/book-light.html</code></td></tr>
 </table>
 <p>A browser window opens automatically. Tap (or click) <b>“Touch to Begin”</b> — the book goes
 <b>full-screen</b> and the background music starts.</p>
@@ -102,18 +101,18 @@ close the small black window that opened with the browser.</div>
 some images won't load.</div>
 
 <!-- 2 -->
-<h2 class="sec" id="two">2. The two versions</h2>
+<h2 class="sec" id="two">2. Overview</h2>
+<p>The kiosk is a single <b>3D book</b> (<code>index.html</code>) that renders on the screen like a
+real book on a table. At a glance:</p>
 <table>
-  <tr><th></th><th>3D book (<code>index.html</code>)</th><th>Light book (<code>book-light.html</code>)</th></tr>
-  <tr><td><b>Look</b></td><td>Realistic 3D book on a table with props (lamp, plant…)</td><td>Flat, classic page-flip</td></tr>
-  <tr><td><b>Languages</b></td><td>English + Romanian (on-screen buttons)</td><td>Romanian only</td></tr>
-  <tr><td><b>Developer panel</b></td><td>Yes (press <kbd>D</kbd>)</td><td>No</td></tr>
-  <tr><td><b>PDF importer</b></td><td>Yes (in the dev panel)</td><td>—</td></tr>
-  <tr><td><b>Page formats</b></td><td>Images <b>and video</b> (MP4/WEBM)</td><td>Images only</td></tr>
-  <tr><td><b>First page</b></td><td>Starts at <code>page-01</code></td><td>Starts at <code>page-02</code> (page-01 is skipped)</td></tr>
+  <tr><th>Feature</th><th>Details</th></tr>
+  <tr><td><b>Look</b></td><td>Realistic 3D book on a table with decorative props (lamp, plant…) and an idle “attract” camera view.</td></tr>
+  <tr><td><b>Languages</b></td><td>English + Romanian (on-screen EN/RO buttons).</td></tr>
+  <tr><td><b>Developer panel</b></td><td>Yes — press <kbd>D</kbd> (camera, lighting, audio, visuals, navigation, PDF import).</td></tr>
+  <tr><td><b>PDF importer</b></td><td>Yes — turn a PDF into page images (in the dev panel).</td></tr>
+  <tr><td><b>Page formats</b></td><td>Images (<code>.jpg/.jpeg/.png</code>) <b>and video</b> (<code>.mp4/.webm</code>).</td></tr>
+  <tr><td><b>Pages</b></td><td>Read in number order from the page folders (see next section).</td></tr>
 </table>
-<p>Both versions read the <b>same page folders</b>, so a page you add appears in both
-(except page-01, which the light version intentionally ignores).</p>
 
 <!-- 3 -->
 <h2 class="sec" id="pages">3. How pages work</h2>
@@ -142,9 +141,8 @@ some images won't load.</div>
   <li><b>A missing number is OK</b> — the book skips it and keeps going (it tolerates up to <b>5 missing numbers in a row</b> before it assumes the book has ended).</li>
   <li>To <b>end</b> the book, just stop numbering — after 5 blank numbers in a row it stops looking.</li>
 </ul>
-<div class="note"><b>Why does the 3D book start at page-01 but the light book at page-02?</b>
-The light book is set to ignore <code>page-01</code> on purpose (e.g. a cover that only the 3D
-version should show). Everything from <code>page-02</code> onward appears in both.</div>
+<div class="note"><b>Tip:</b> The very first page (<code>page-01</code>) is the book's cover. Pages
+load in order from there.</div>
 
 <!-- 4 -->
 <h2 class="sec" id="editpages">4. Add, replace, or remove pages</h2>
@@ -167,11 +165,8 @@ have to renumber everything.</p>
 <p>Either renumber the following files, or ask the developer to enable the “manifest” option,
 which lets you control the exact order without renumbering.</p>
 
-<div class="warn"><b>After changing files, refresh the browser:</b>
-<ul>
-  <li><b>Light book</b> — a normal refresh (<kbd>F5</kbd>) is enough; it always loads the newest images.</li>
-  <li><b>3D book</b> — do a <b>hard refresh</b>: <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd>. (A plain refresh can show the old cached image.)</li>
-</ul></div>
+<div class="warn"><b>After changing files, refresh the browser</b> with a <b>hard refresh</b>:
+<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd>. (A plain refresh can show the old cached image.)</div>
 <div class="tip"><b>Blank/white page showing?</b> That means there's an actual blank image file
 with that number. Just delete that file from the folder.</div>
 
@@ -197,8 +192,7 @@ blank pages, set <b>From page</b> to the first real page so the book doesn't ope
 <h2 class="sec" id="lang">6. Languages</h2>
 <ul>
   <li>Pages live in two folders: <span class="path">assets/pages/en/</span> and <span class="path">assets/pages/ro/</span>.</li>
-  <li>The <b>3D book</b> shows <b>EN / RO</b> buttons so visitors can switch.</li>
-  <li>The <b>light book</b> is <b>Romanian only</b>.</li>
+  <li>The book shows <b>EN / RO</b> buttons so visitors can switch.</li>
   <li>The language the kiosk <b>starts in</b> is set in the settings file
       <span class="path">assets/user-config.json</span> (the line <code>"book-lang": "ro"</code>).
       This always wins on launch, so the kiosk reliably opens in the language you chose.</li>
@@ -207,7 +201,7 @@ blank pages, set <b>From page</b> to the first real page so the book doesn't ope
 Notepad and set <code>"book-lang"</code> to <code>"ro"</code> or <code>"en"</code>, then save.</div>
 
 <!-- 7 -->
-<h2 class="sec" id="dev">7. Developer panel (3D book only)</h2>
+<h2 class="sec" id="dev">7. Developer panel</h2>
 <p>Press <kbd>D</kbd> at any time to open or close the panel. Click the tabs across the top to
 switch sections. Below is every setting explained. After adjusting, remember to
 <b>Save All</b> (section 8) so your changes are kept.</p>
@@ -311,7 +305,7 @@ switch sections. Below is every setting explained. After adjusting, remember to
 <table>
   <tr><th>Problem</th><th>Fix</th></tr>
   <tr><td>An old image still shows after I replaced it</td>
-      <td>Hard refresh the 3D book: <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd>. The light book updates with a normal refresh.</td></tr>
+      <td>Do a hard refresh: <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd>.</td></tr>
   <tr><td>A white / blank page appears</td>
       <td>There's a blank image file with that number — delete it from the page folder.</td></tr>
   <tr><td>The book stops earlier than expected</td>
@@ -322,7 +316,7 @@ switch sections. Below is every setting explained. After adjusting, remember to
       <td>Make sure you launched with the <code>.bat</code> file, not by opening the HTML directly.</td></tr>
   <tr><td>PDF converter can't save to the folder</td>
       <td>Use Google Chrome or Microsoft Edge.</td></tr>
-  <tr><td>The kiosk feels slow (3D)</td>
+  <tr><td>The kiosk feels slow</td>
       <td>In the dev panel → VISUAL tab, lower the quality/effects, then Save All.</td></tr>
 </table>
 
@@ -330,14 +324,13 @@ switch sections. Below is every setting explained. After adjusting, remember to
 <h2 class="sec" id="cheat">11. Quick cheat-sheet</h2>
 <table>
   <tr><th>I want to…</th><th>Do this</th></tr>
-  <tr><td>Start the 3D book</td><td>Double-click <code>start.bat</code></td></tr>
-  <tr><td>Start the light book</td><td>Double-click <code>start-light.bat</code></td></tr>
-  <tr><td>Open / close dev tools</td><td>Press <kbd>D</kbd> (3D book)</td></tr>
+  <tr><td>Start the book</td><td>Double-click <code>start.bat</code></td></tr>
+  <tr><td>Open / close dev tools</td><td>Press <kbd>D</kbd></td></tr>
   <tr><td>Add pages</td><td>Drop <code>page-NN.jpg</code> into <span class="path">assets/pages/ro/</span></td></tr>
   <tr><td>Convert a PDF</td><td>Dev panel → <b>PDF</b> tab</td></tr>
   <tr><td>Change start language</td><td>Edit <code>"book-lang"</code> in <code>assets/user-config.json</code></td></tr>
   <tr><td>Make my settings permanent</td><td>Dev → <b>Save All</b> → <b>Export Config</b> → replace <code>assets/user-config.json</code></td></tr>
-  <tr><td>Refresh after changes</td><td><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd> (3D), <kbd>F5</kbd> (light)</td></tr>
+  <tr><td>Refresh after changes</td><td><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd></td></tr>
 </table>
 
 <footer>

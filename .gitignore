@@ -11,9 +11,6 @@ assets/pages/ro/*
 !assets/pages/ro/.gitkeep
 !assets/pages/PAges.txt
 
-# turn.js demo samples — not used by the app (only trunjs4/lib + trunjs4/extras are)
-trunjs4/samples/
-
 # Source PDFs (originals you convert from — not needed in the repo)
 *.pdf
 
