@@ -19,15 +19,14 @@ The kiosk is a set of static files served by a tiny **local** web server (it mus
 
 ## 2. The local web server (how it's provided)
 
-The launch script (`start.bat`) automatically picks the first available option, in this order:
+The launch script (`start.bat`) automatically picks the first available option, in this order.
+**All of them are fully offline — nothing is ever downloaded:**
 
 1. **Bundled Python** — `python313/` (shipped with the project) → *nothing to install*
 2. **System Python** — if `python` / `python3` is on the machine
-3. **Node.js** — if installed (`npx serve`)
-4. **Windows PowerShell** — `server.ps1`, using the built-in `HttpListener`
+3. **Windows PowerShell** — `server.ps1`, using the built-in `HttpListener`
 
-Because option 4 is **built into Windows**, the kiosk will run **even with no Python and no
-Node.js installed**.
+Because option 3 is **built into Windows**, the kiosk will run **even with no Python installed**.
 
 ---
 
@@ -37,10 +36,9 @@ The `python313/` folder (~21 MB) is included only so the kiosk is fully self-con
 delete it** to slim things down — here's what then applies:
 
 - ✅ **It still runs on Windows** with **no install**, via the PowerShell fallback (`server.ps1`,
-  port 8080).
-- Optional installs (only if you prefer the Python/Node server options 2–3 above):
-  - **Python 3** ([python.org](https://www.python.org/downloads/)) — tick *“Add Python to PATH”*.
-  - **Node.js** ([nodejs.org](https://nodejs.org/)) — LTS version.
+  port 8080) — still fully offline.
+- Optional: installing **Python 3** ([python.org](https://www.python.org/downloads/), tick
+  *“Add Python to PATH”*) gives a slightly faster static server, but it is not required.
 
 > Note: this only concerns the *web server*. The app's own libraries (three.js, pdf.js) are
 > **bundled** in `lib/` and are **not** something you install.
