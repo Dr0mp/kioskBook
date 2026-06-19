@@ -24,8 +24,8 @@ Double-click the launch script (it starts a tiny local web server and opens a br
 Recommended browser: **Google Chrome** or **Microsoft Edge** (required for the PDF importer's
 save-to-folder feature).
 
-> **Requirements & installation:** see [`INSTALL.md`](INSTALL.md) — including what's needed if you
-> remove the bundled `python313/` server.
+> The local server uses **built-in Windows PowerShell** by default — nothing to install. See
+> [`INSTALL.md`](INSTALL.md) for requirements and optional Python setup.
 
 ---
 
@@ -39,8 +39,17 @@ assets/pages/ro/   ← Romanian pages
 ```
 
 - Named `page-01.jpg`, `page-02.jpg`, … `page-100.jpg`, `page-200.jpg` (2-digit minimum).
-- Formats: `.jpg` `.jpeg` `.png`, and also `.mp4` / `.webm` video pages.
+- Formats: `.jpg` `.jpeg` `.png`, and also `.mp4` / `.webm` video pages (video pages are untested).
 - Missing numbers are tolerated (up to 5 in a row) — the book skips gaps and stops after the end.
+
+**Recommended image size** (portrait, per page):
+
+| Tier | Pixels |
+|------|--------|
+| Minimum | 800 × 994 |
+| Recommended | 1200 × 1491 |
+| High | 1500 × 1865 |
+| Overkill | 2000 × 2484 |
 
 **Page images are not included in this repository** (see [`.gitignore`](.gitignore)). Drop the
 `page-NN.jpg` files into the `assets/pages/<lang>/` folders on the deployment machine.
@@ -78,7 +87,7 @@ assets/
   user-config.json    Bundled default settings
 admin-guide*.html     Operator manual (EN / RO)
 start.bat             Launcher
-server.ps1            No-install fallback web server (Windows PowerShell)
+server.ps1            No-install local web server (Windows PowerShell)
 ```
 
 ---
@@ -100,8 +109,6 @@ license; see the headers inside the files in `lib/`.
 ---
 
 ## Copyright
-
-© 2026 **[Project Owner / Client name]**. All rights reserved.
 
 The application code in this repository (the viewer, scene logic, dev panel, PDF importer, and
 configuration) is proprietary to the project owner. Page content (the book images) is the property

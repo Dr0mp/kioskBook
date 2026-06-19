@@ -41,13 +41,16 @@ try {
       $mime  = if ($mimeTypes[$ext]) { $mimeTypes[$ext] } else { 'application/octet-stream' }
       $bytes = [System.IO.File]::ReadAllBytes($path)
       $res.ContentType   = $mime
-      $res.ContentLength64 = $bytes.Length
       $res.Headers.Add("Cache-Control", "no-store, no-cache")
-      $res.OutputStream.Write($bytes, 0, $bytes.Length)
-      Write-Host "200 $($req.Url.LocalPath)"
+      $res.ContentLength64 = $bytes.Length
+      # HEAD requests (used for page discovery) must send headers only, no body.
+      if ($req.HttpMethod -ne 'HEAD') {
+        $res.OutputStream.Write($bytes, 0, $bytes.Length)
+      }
+      Write-Host "$($req.HttpMethod) 200 $($req.Url.LocalPath)"
     } else {
       $res.StatusCode = 404
-      Write-Host "404 $($req.Url.LocalPath)"
+      Write-Host "$($req.HttpMethod) 404 $($req.Url.LocalPath)"
     }
     $res.Close()
   }
