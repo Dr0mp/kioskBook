@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Book</title>
+  <link rel="icon" href="data:,">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; overflow: hidden;
+                 background: radial-gradient(ellipse at 50% 44%, #282420 0%, #0e0d0c 100%); }
+
+    /* ── Main layout ── */
+    #canvas {
+      position: fixed; inset: 0; z-index: 1;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+    }
+    #book-viewport {
+      position: relative;
+      flex: 1; width: 100%;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* ── Touch turn-zones: big left/right halves (back / forward) ── */
+    #tap-prev, #tap-next {
+      position: absolute; top: 0; bottom: 0; width: 50%;
+      z-index: 10; cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #tap-prev { left: 0; }
+    #tap-next { right: 0; }
+
+    /* ══════════════════════════════════════════════════
+       STEVE JOBS CSS — copied verbatim, adapted for images
+       ══════════════════════════════════════════════════ */
+    .sj-book {
+      position: relative;
+      -webkit-transition: margin-left 0.5s;
+              transition: margin-left 0.5s;
+      /* Book floating above surface */
+      -webkit-box-shadow: 0 24px 70px rgba(0,0,0,0.65), 0 8px 20px rgba(0,0,0,0.45);
+              box-shadow: 0 24px 70px rgba(0,0,0,0.65), 0 8px 20px rgba(0,0,0,0.45);
+    }
+
+    /* 3-D perspective */
+    .sj-book .page-wrapper {
+      -webkit-perspective: 2000px;
+         -moz-perspective: 2000px;
+              perspective: 2000px;
+    }
+
+    /* Content pages — full bleed */
+    .sj-book .page {
+      position: relative;
+      background-size:   100% 100%;
+      background-repeat: no-repeat;
+      background-color:  #fff;
+    }
+
+    /* Hard covers — full bleed */
+    .sj-book .hard {
+      background-size:   100% 100%;
+      background-repeat: no-repeat;
+      background-color:  #1a1713;
+      -webkit-box-shadow: none;
+              box-shadow: none;
+    }
+
+    /* Spine shading overlay */
+    .sj-book .page .gradient {
+      position: absolute; top: 0; bottom: 0; left: 0; right: 0;
+      pointer-events: none;
+    }
+    .sj-book .even .gradient {
+      background: linear-gradient(to right, rgba(0,0,0,0) 94%, rgba(0,0,0,0.16) 100%);
+    }
+    .sj-book .odd .gradient {
+      background: linear-gradient(to left, rgba(0,0,0,0) 94%, rgba(0,0,0,0.16) 100%);
+    }
+
+    /* ══════════════════════════════════════════════════
+       MAGAZINE thumbnail strip (from magazine sample)
+       ══════════════════════════════════════════════════ */
+    #thumb-bar {
+      width: 100%; flex-shrink: 0;
+      background: rgba(0,0,0,0.88);
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 8px 20px 12px;
+      overflow-x: auto; overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,0.15) transparent;
+    }
+    #thumb-bar::-webkit-scrollbar { height: 3px; }
+    #thumb-bar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
+
+    #thumb-strip {
+      display: flex; align-items: flex-end; gap: 4px;
+      width: max-content; margin: 0 auto;
+    }
+
+    #thumb-strip li {
+      list-style: none; display: flex; gap: 1px;
+      cursor: pointer; flex-shrink: 0;
+      border: 2px solid transparent; border-radius: 2px;
+      opacity: 0.5;
+      -webkit-transition: opacity 0.15s, border-color 0.15s, -webkit-transform 0.1s;
+              transition: opacity 0.15s, border-color 0.15s, transform 0.1s;
+    }
+    #thumb-strip li img {
+      display: block; height: 68px; width: auto;
+      -webkit-user-drag: none; -webkit-user-select: none; user-select: none;
+    }
+    #thumb-strip li.current {
+      opacity: 1; border-color: #f5e6c8;
+      -webkit-box-shadow: 0 0 8px rgba(245,230,200,0.35);
+              box-shadow: 0 0 8px rgba(245,230,200,0.35);
+    }
+    #thumb-strip li:hover { opacity: 0.8; -webkit-transform: translateY(-2px); transform: translateY(-2px); }
+    #thumb-strip li.current:hover { opacity: 1; }
+
+    /* ── Top controls ── */
+    #top-bar {
+      position: fixed; top: 14px; right: 18px; z-index: 30;
+      display: flex; align-items: center; gap: 14px;
+    }
+    #lang-btns { display: flex; gap: 6px; }
+    .lang-btn {
+      padding: 6px 18px;
+      background: rgba(0,0,0,0.55); border: 1px solid #444; border-radius: 4px;
+      color: #777; font: 13px/1 monospace; cursor: pointer;
+      -webkit-user-select: none; user-select: none;
+      -webkit-transition: border-color 0.2s, color 0.2s;
+              transition: border-color 0.2s, color 0.2s;
+    }
+    .lang-btn.on { border-color: #f5e6c8; color: #f5e6c8; }
+    #vol-wrap {
+      display: flex; align-items: center; gap: 6px;
+      opacity: 0.35;
+      -webkit-transition: opacity 0.2s; transition: opacity 0.2s;
+    }
+    #vol-wrap:hover { opacity: 0.9; }
+    #vol-wrap span { color: #aaa; font-size: 15px; }
+    #vol-slider { width: 72px; accent-color: #f5e6c8; cursor: pointer; }
+
+
+    /* ── Fullscreen / start overlay ── */
+    #start-screen {
+      position: fixed; inset: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(0,0,0,0.88); cursor: pointer;
+      -webkit-transition: opacity 0.6s; transition: opacity 0.6s;
+    }
+    #start-screen.hidden { opacity: 0; pointer-events: none; }
+    #start-screen .label {
+      color: #f5e6c8; font-family: Georgia, serif;
+      font-size: clamp(1.2rem, 3vw, 2rem);
+      letter-spacing: 0.2em; text-transform: uppercase;
+      -webkit-animation: pulse 2.8s ease-in-out infinite;
+              animation: pulse 2.8s ease-in-out infinite;
+    }
+    @-webkit-keyframes pulse { 0%,100%{opacity:.25} 50%{opacity:1} }
+    @keyframes          pulse { 0%,100%{opacity:.25} 50%{opacity:1} }
+  </style>
+</head>
+<body>
+
+<!-- Start / fullscreen overlay -->
+<div id="start-screen">
+  <div class="label" id="start-label">Touch to Begin</div>
+</div>
+
+<!-- Top controls -->
+<div id="top-bar">
+  <!-- Language switcher removed (RO only). Kept for future use:
+  <div id="lang-btns">
+    <button class="lang-btn on" id="lang-en">EN</button>
+    <button class="lang-btn"    id="lang-ro">RO</button>
+  </div>
+  -->
+  <div id="vol-wrap">
+    <span>&#9834;</span>
+    <input type="range" id="vol-slider" min="0" max="1" step="0.05" value="0.2">
+  </div>
+</div>
+
+<!-- Main layout -->
+<div id="canvas">
+  <div id="book-viewport">
+    <div class="sj-book" id="flipbook"></div>
+    <div id="tap-prev"></div>
+    <div id="tap-next"></div>
+  </div>
+  <div id="thumb-bar">
+    <ul id="thumb-strip"></ul>
+  </div>
+</div>
+
+<script src="trunjs4/extras/jquery.min.1.7.js"></script>
+<script src="trunjs4/lib/turn.js"></script>
+<script src="config.js"></script>
+<script src="audio.js"></script>
+<script src="music.js"></script>
+<script>
+'use strict';
+
+/* ── Config ── */
+var FLIP_DUR   = (typeof BOOK_CONFIG !== 'undefined' && BOOK_CONFIG.flipDuration) || 1000;
+var JUMP_DUR   = 320;
+
+/* ── State ── */
+var pages        = [];
+var lang         = 'ro';   /* RO only (dual-language UI removed; see switchLang below to re-enable) */
+var fbInited     = false;
+var started      = false;
+var musicOn      = false;
+var gotoTarget   = null;   /* 1-based spread to reach, or null            */
+var autoFlipping = false;  /* true when WE called turn('next'/'previous') */
+var turnImg      = [];     /* turnImg[tp] = image url shown on turn page tp, or null */
+
+var $fb = $('#flipbook');
+
+/* ── Layout ──────────────────────────────────────────────────────────────────
+   Match Steve Jobs aspect ratio: 960 × 600 per spread (480 × 600 per page).
+   Scale to fill available screen at 1080p and other resolutions.
+   ──────────────────────────────────────────────────────────────────────────── */
+var SJ_SPREAD_W = 960, SJ_SPREAD_H = 600;
+
+function getThumbH() {
+  var el = document.getElementById('thumb-bar');
+  return el ? el.offsetHeight : 100;
+}
+
+function getLayout() {
+  var W = window.innerWidth, H = window.innerHeight;
+  var navH = getThumbH();
+  var avH  = H - navH - 40;   /* 20 px breathing room top + bottom */
+  var avW  = W - 80;           /* 40 px margin each side */
+  var scale = Math.min(avW / SJ_SPREAD_W, avH / SJ_SPREAD_H);
+  var sw = Math.floor(SJ_SPREAD_W * scale);
+  var sh = Math.floor(SJ_SPREAD_H * scale);
+  if (sw % 2 !== 0) sw--;
+  return { W: W, H: H, navH: navH, sw: sw, sh: sh, pw: sw / 2 };
+}
+
+/* ── Spread helpers ────────────────────────────────────────────────────────
+   Cover is alone on page 1, so turn.js views are {1},{2,3},{4,5},…
+   spread 1 = page 1; spread k≥2 = turn pages {2k-2, 2k-1}.
+   turnImg[tp] (filled by buildPages) is the authoritative image-per-turn-page.
+   ──────────────────────────────────────────────────────────────────────────── */
+function spreadOf(tp) { return (tp <= 1) ? 1 : Math.floor(tp / 2) + 1; }
+
+function totalSpreads() {
+  return fbInited ? spreadOf($fb.turn('pages')) : 1;
+}
+
+/* Left / right turn-page numbers for a 1-based spread. */
+function turnPagesOfSpread(s) {
+  if (s <= 1) return { l: null, r: 1 };
+  return { l: 2 * s - 2, r: 2 * s - 1 };
+}
+
+/* ── Build DOM pages ──────────────────────────────────────────────────────
+   Rigid inside covers (hard boards) so opening/closing the cover is rigid.
+   The inside covers show real page images.
+     page 1         = FRONT COVER (hard)                → shown alone
+     page 2         = inside front cover (hard, shows pages[1])
+     pages 3..      = content (soft, pages[2..n-3])
+     [pad: 1 blank if n is odd]
+     page P-1       = inside back cover (hard, shows pages[n-2])
+     page P (even)  = BACK COVER (hard)                 → shown alone
+   ──────────────────────────────────────────────────────────────────────── */
+function buildPages(pageUrls, pw, sh) {
+  var n  = pageUrls.length;
+  var tp = 0;
+  turnImg = [null];   /* index 0 unused; turn pages are 1-based */
+
+  function hard(extraClass, imgUrl) {
+    var d = $('<div>').addClass(('hard ' + extraClass).trim()).attr('depth', 5)
+      .css({ width: pw, height: sh });
+    if (imgUrl) d.css({ backgroundImage: 'url(' + imgUrl + ')' });
+    d.appendTo($fb);
+    tp++; turnImg[tp] = imgUrl || null;
+    return d;
+  }
+
+  function content(imgUrl) {
+    tp++;                                               /* page number first */
+    var sideClass = (tp % 2 === 0) ? 'even' : 'odd';
+    var d = $('<div>').addClass('page ' + sideClass)
+      .css({ width: pw, height: sh })
+      .append('<div class="gradient"></div>');
+    if (imgUrl) d.css({ backgroundImage: 'url(' + imgUrl + ')' });
+    d.appendTo($fb);
+    turnImg[tp] = imgUrl || null;
+    return d;
+  }
+
+  /* page 1: front cover (alone) */
+  hard('', pageUrls[0]);
+
+  /* page 2: inside front cover — rigid board showing the first page image */
+  hard('inside-cover', pageUrls[1]);
+
+  /* middle content (pages[2..n-3]) — soft, curling pages */
+  for (var i = 2; i <= n - 3; i++) content(pageUrls[i]);
+
+  /* parity pad: front + insideFront + (n-4) content + insideBack + back = n.
+     Back cover alone needs an even page → needs n even; pad if n is odd. */
+  if (n % 2 !== 0) content(null);
+
+  /* inside back cover — rigid board showing the last page image */
+  hard('inside-cover', pageUrls[n - 2]);
+
+  /* back cover (alone) */
+  hard('', pageUrls[n - 1]);
+}
+
+/* ── Init flipbook ── */
+function initFlipbook(pageUrls) {
+  pages        = pageUrls;
+  gotoTarget   = null;
+  autoFlipping = false;
+  var l = getLayout(), sw = l.sw, sh = l.sh, pw = l.pw;
+
+  if (fbInited) {
+    try { $fb.turn('destroy'); } catch (e) {}
+    $fb.off().removeData();
+    fbInited = false;
+  }
+  $fb.empty();
+
+  if (!pageUrls || pageUrls.length < 2) return;
+
+  buildPages(pageUrls, pw, sh);
+
+  $fb.turn({
+    width:        sw,
+    height:       sh,
+    elevation:    50,
+    acceleration: true,
+    gradients:    true,
+    autoCenter:   false,   /* don't slide while flipping; we center AFTER (below) */
+    duration:     FLIP_DUR,
+    display:      'double',
+    page:         1,
+    cornerSize:   100,
+    when: {
+      turning: function (e, page) {
+        ensureMusic();
+        Audio.play('flip', 0.8);
+      },
+      turned: function (e, page) {
+        Audio.play('land', 0.6);
+        /* Center AFTER the flip finishes — the margin-left transition on
+           .sj-book glides the book into place so single-page (cover / back
+           cover) views don't shift mid-animation. */
+        $fb.turn('center');
+
+        var wasAuto  = autoFlipping;
+        autoFlipping = false;
+        updateNav();
+
+        if (gotoTarget === null) return;
+
+        if (!wasAuto) {
+          /* user swiped manually during auto-flip — cancel the sequence */
+          gotoTarget = null;
+          $fb.turn('options', { duration: FLIP_DUR });
+          return;
+        }
+
+        var cur = spreadOf($fb.turn('page'));
+        if (cur === gotoTarget) {
+          gotoTarget = null;
+          $fb.turn('options', { duration: FLIP_DUR });
+          return;
+        }
+
+        setTimeout(function () {
+          if (!fbInited || gotoTarget === null) return;
+          var now = spreadOf($fb.turn('page'));
+          if (now === gotoTarget) {
+            gotoTarget = null;
+            $fb.turn('options', { duration: FLIP_DUR });
+            updateNav();
+            return;
+          }
+          autoFlipping = true;
+          if (now < gotoTarget) $fb.turn('next');
+          else                  $fb.turn('previous');
+        }, 40);
+      }
+    }
+  });
+
+  fbInited = true;
+  buildThumbnails();
+  updateNav();
+  centerNow();   /* center the cover instantly (no slide) on load */
+}
+
+/* Center without the glide animation (for load / resize) */
+function centerNow() {
+  if (!fbInited) return;
+  $fb.css('transition', 'none');
+  $fb.turn('center');
+  $fb[0].offsetHeight;            /* force reflow so the change is instant */
+  $fb.css('transition', '');
+}
+
+/* ── Resize ── */
+function resizeFlipbook() {
+  if (!pages.length) return;
+  if (!fbInited) { initFlipbook(pages); return; }
+  var l = getLayout(), sw = l.sw, sh = l.sh;
+  $fb.turn('size', sw, sh);   /* turn.js resizes all pages automatically */
+  centerNow();
+}
+
+/* ── Sequential flip to a target spread ── */
+function goToSpread(target) {
+  if (!fbInited) return;
+  target = Math.max(1, Math.min(totalSpreads(), target));
+  var cur = spreadOf($fb.turn('page'));
+  if (cur === target) return;
+  gotoTarget   = target;
+  autoFlipping = true;
+  $fb.turn('options', { duration: JUMP_DUR });
+  if (cur < target) $fb.turn('next');
+  else              $fb.turn('previous');
+}
+
+/* ── Navigation highlight ── */
+function updateNav() {
+  if (!fbInited) return;
+  var cur = spreadOf($fb.turn('page'));
+
+  var items = document.querySelectorAll('#thumb-strip li');
+  for (var i = 0; i < items.length; i++) items[i].classList.remove('current');
+
+  var active = document.querySelector('#thumb-strip li[data-spread="' + cur + '"]');
+  if (active) {
+    active.classList.add('current');
+    centerThumb(active);
+  }
+}
+
+/* Keep the active thumbnail centred in the strip so you always see pages
+   on both sides (clamped automatically at the start/end of the strip). */
+function centerThumb(el) {
+  var bar = document.getElementById('thumb-bar');
+  if (!bar) return;
+  var barRect = bar.getBoundingClientRect();
+  var elRect  = el.getBoundingClientRect();
+  var delta   = (elRect.left + elRect.width / 2) - (barRect.left + barRect.width / 2);
+  bar.scrollTo({ left: bar.scrollLeft + delta, behavior: 'smooth' });
+}
+
+/* ── Magazine thumbnail strip ── */
+function buildThumbnails() {
+  var strip = document.getElementById('thumb-strip');
+  strip.innerHTML = '';
+  var total = totalSpreads();
+
+  for (var s = 1; s <= total; s++) {
+    var tps     = turnPagesOfSpread(s);
+    var leftUrl  = (tps.l != null) ? turnImg[tps.l] : null;
+    var rightUrl = (tps.r != null) ? turnImg[tps.r] : null;
+    if (!leftUrl && !rightUrl) continue;   /* spread with no images (e.g. inside cover only) */
+
+    var li = document.createElement('li');
+    li.dataset.spread = s;
+
+    if (leftUrl) {
+      var imgL = document.createElement('img');
+      imgL.src = leftUrl; imgL.alt = ''; imgL.draggable = false;
+      li.appendChild(imgL);
+    }
+    if (rightUrl) {
+      var imgR = document.createElement('img');
+      imgR.src = rightUrl; imgR.alt = ''; imgR.draggable = false;
+      li.appendChild(imgR);
+    }
+
+    (function (spread) {
+      function jump(e) {
+        e.preventDefault();
+        if (!fbInited) return;
+        goToSpread(spread);
+      }
+      li.addEventListener('click',    jump);
+      li.addEventListener('touchend', jump, { passive: false });
+    }(s));
+
+    strip.appendChild(li);
+  }
+}
+
+/* ── Page discovery (gap-tolerant: skips up to MAX_GAP missing numbers) ── */
+function discoverPages(lng) {
+  var exts = ['jpg', 'jpeg', 'png'], found = [];
+  var START_PAGE = 2;          /* light version ignores page-01; reading starts at page-02 */
+  var MAX_GAP = 5, MAX_PAGE = 999;
+  /* Cache-buster (fresh per load): forces the browser to fetch the CURRENT
+     image bytes instead of a stale cached version when a file is replaced. */
+  var bust = '?v=' + Date.now();
+  function pad(i) { return i < 10 ? '0' + i : '' + i; }
+  function tryPage(i, misses) {
+    if (i > MAX_PAGE) return Promise.resolve(found);
+    var base = 'assets/pages/' + lng + '/page-' + pad(i);
+    function tryExt(ei) {
+      if (ei >= exts.length) return Promise.resolve(null);
+      return fetch(base + '.' + exts[ei], { method: 'HEAD', cache: 'no-store' })
+        .then(function (r) { return r.ok ? base + '.' + exts[ei] : tryExt(ei + 1); })
+        .catch(function ()  { return tryExt(ei + 1); });
+    }
+    return tryExt(0).then(function (hit) {
+      if (hit) { found.push(hit + bust); return tryPage(i + 1, 0); }
+      if (misses + 1 > MAX_GAP) return found;   // give up after MAX_GAP blanks in a row
+      return tryPage(i + 1, misses + 1);
+    });
+  }
+  return tryPage(START_PAGE, 0);
+}
+
+/* ── Music ── */
+function ensureMusic() {
+  if (musicOn) return;
+  musicOn = true;
+  Music.start(parseFloat(document.getElementById('vol-slider').value));
+}
+document.getElementById('vol-slider').addEventListener('input', function (e) {
+  Music.setVolume(parseFloat(e.target.value));
+});
+
+/* ── Language ── */
+function setText(id, txt) {
+  var el = document.getElementById(id);   /* start-label is removed after start → may be null */
+  if (el) el.textContent = txt;
+}
+function applyLang(l) {
+  lang = l;
+  localStorage.setItem('book-lang', l);
+  document.querySelectorAll('.lang-btn').forEach(function (b) { b.classList.remove('on'); });
+  var btn = document.getElementById('lang-' + l);
+  if (btn) btn.classList.add('on');
+  var ro = l === 'ro';
+  setText('start-label', ro ? 'Atingeți pentru a începe' : 'Touch to Begin');
+}
+
+function switchLang(l) {
+  if (l === lang) return;
+  /* remember where the reader is, so the swap doesn't throw them back to the cover */
+  var keepSpread = fbInited ? spreadOf($fb.turn('page')) : 1;
+  applyLang(l);
+  discoverPages(l).then(function (urls) {
+    if (!urls || urls.length < 2) return;   /* discovery failed — keep current book */
+    initFlipbook(urls);
+    if (keepSpread > 1 && fbInited) {
+      var target = Math.min(keepSpread, totalSpreads());
+      var tps    = turnPagesOfSpread(target);
+      var tp     = tps.r || tps.l || 1;
+      try { $fb.turn('page', tp); } catch (e) {}
+      updateNav();
+    }
+  });
+}
+
+/* Language switcher wiring — guarded so it's a no-op when the buttons are
+   absent (RO-only build). Re-add the #lang-btns markup to re-enable. */
+['en', 'ro'].forEach(function (l) {
+  var btn = document.getElementById('lang-' + l);
+  if (!btn) return;
+  btn.addEventListener('click',    function ()  { switchLang(l); });
+  btn.addEventListener('touchend', function (e) { e.preventDefault(); switchLang(l); });
+});
+
+/* ── Fullscreen helper (all vendor prefixes, swallow rejections) ── */
+function goFullscreen() {
+  var d  = document.documentElement;
+  var fn = d.requestFullscreen || d.webkitRequestFullscreen
+        || d.mozRequestFullScreen || d.msRequestFullscreen;
+  if (!fn) return;
+  try {
+    var p = fn.call(d);
+    if (p && p.catch) p.catch(function () {});   /* ignore "not allowed" rejections */
+  } catch (e) {}
+}
+
+/* ── Start / fullscreen + idle reset ── */
+(function () {
+  var el = document.getElementById('start-screen');
+  var IDLE_MS   = 5 * 60 * 1000;   /* 5 minutes of no interaction → back to splash */
+  var idleTimer = null;
+
+  /* (Re)start the idle countdown — only while a visitor is actively reading. */
+  function armIdle() {
+    clearTimeout(idleTimer);
+    if (started) idleTimer = setTimeout(goIdle, IDLE_MS);
+  }
+
+  function enter(e) {
+    if (started) return;
+    started = true;
+    if (e && e.cancelable) e.preventDefault();
+    goFullscreen();                              /* must run inside the user gesture */
+    el.classList.add('hidden');                  /* keep element so we can re-show it */
+    ensureMusic();
+    armIdle();
+  }
+
+  /* Inactivity: reset the book to the first page and re-show "Touch to Begin". */
+  function goIdle() {
+    if (!started) return;
+    started = false;
+    clearTimeout(idleTimer);
+    if (fbInited) {
+      gotoTarget = null; autoFlipping = false;
+      try {
+        $fb.turn('options', { duration: 0 });    /* jump instantly, behind the splash */
+        $fb.turn('page', 1);
+        $fb.turn('options', { duration: FLIP_DUR });
+      } catch (e2) {}
+      centerNow();
+      updateNav();
+    }
+    el.classList.remove('hidden');               /* fades the splash back in */
+  }
+
+  el.addEventListener('click',    enter);
+  el.addEventListener('touchend', enter, { passive: false });
+
+  /* Any interaction while reading resets the 5-minute countdown. */
+  ['pointerdown', 'keydown', 'wheel', 'touchstart'].forEach(function (ev) {
+    document.addEventListener(ev, function () { if (started) armIdle(); }, { passive: true });
+  });
+}());
+
+/* ── Touch turn-zones (left half = back, right half = forward) ── */
+(function () {
+  function turnPage(dir, e) {
+    if (e) e.preventDefault();
+    if (!fbInited) return;
+    ensureMusic();
+    if (dir < 0) $fb.turn('previous');
+    else         $fb.turn('next');
+  }
+  var prev = document.getElementById('tap-prev');
+  var next = document.getElementById('tap-next');
+  prev.addEventListener('click',    function (e) { turnPage(-1, e); });
+  prev.addEventListener('touchend', function (e) { turnPage(-1, e); }, { passive: false });
+  next.addEventListener('click',    function (e) { turnPage( 1, e); });
+  next.addEventListener('touchend', function (e) { turnPage( 1, e); }, { passive: false });
+}());
+
+/* ── Resize + fullscreen change ── */
+window.addEventListener('resize', function () { setTimeout(resizeFlipbook, 50); });
+['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange', 'MSFullscreenChange']
+  .forEach(function (ev) {
+    document.addEventListener(ev, function () { setTimeout(resizeFlipbook, 120); });
+  });
+
+/* ── Bootstrap ── */
+discoverPages(lang)
+  .then(function (pg) {
+    pages = pg;
+    return Audio.init((typeof BOOK_CONFIG !== 'undefined' && BOOK_CONFIG.sounds) || {});
+  })
+  .then(function () {
+    applyLang(lang);
+    initFlipbook(pages);
+  });
+</script>
+</body>
+</html>

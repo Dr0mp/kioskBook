@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Carte Kiosk — Ghid Administrator</title>
+<style>
+  :root{
+    --bg:#f6f4ef; --card:#fff; --ink:#23201c; --muted:#6b655c;
+    --accent:#9a6b3f; --accent2:#3a6ea5; --line:#e4ded3; --code:#f0ece2;
+    --warn:#b4521f; --ok:#3c7a4e;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:16px/1.6 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;}
+  .wrap{display:flex;max-width:1180px;margin:0 auto;gap:32px;padding:0 24px;}
+  nav{position:sticky;top:0;align-self:flex-start;height:100vh;overflow:auto;
+      width:240px;flex:0 0 240px;padding:28px 0;}
+  nav h2{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 10px;}
+  nav a{display:block;color:var(--ink);text-decoration:none;padding:5px 10px;border-radius:6px;font-size:14.5px;}
+  nav a:hover{background:#ece6da;}
+  main{flex:1;min-width:0;padding:36px 0 120px;}
+  header.hero{background:linear-gradient(135deg,#2c2722,#574733);color:#fff;
+       border-radius:16px;padding:34px 36px;margin-bottom:34px;}
+  header.hero h1{margin:0 0 6px;font-size:30px;}
+  header.hero p{margin:0;color:#e8ddca;}
+  h2.sec{font-size:23px;margin:46px 0 14px;padding-bottom:8px;border-bottom:2px solid var(--line);}
+  h3{font-size:18px;margin:26px 0 8px;color:#33598a;}
+  p,li{color:var(--ink);}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 22px;margin:14px 0;}
+  code,kbd{background:var(--code);border-radius:5px;padding:2px 7px;font-family:Consolas,Menlo,monospace;font-size:14px;}
+  kbd{border:1px solid #cfc7b8;border-bottom-width:2px;}
+  .path{color:var(--accent);font-weight:600;}
+  table{border-collapse:collapse;width:100%;margin:12px 0;background:#fff;border-radius:10px;overflow:hidden;}
+  th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top;font-size:15px;}
+  th{background:#efe9dd;font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:#5f584d;}
+  tr:last-child td{border-bottom:none;}
+  .tip,.warn,.note{border-left:4px solid;border-radius:8px;padding:12px 16px;margin:14px 0;}
+  .tip{background:#eef6f0;border-color:var(--ok);}
+  .warn{background:#fbf0e9;border-color:var(--warn);}
+  .note{background:#eef2f8;border-color:var(--accent2);}
+  .tip b,.ok{color:var(--ok)} .warn b{color:var(--warn)}
+  ol,ul{padding-left:22px;} li{margin:4px 0;}
+  .step{counter-reset:step;list-style:none;padding-left:0;}
+  .step>li{position:relative;padding:6px 0 6px 44px;margin:8px 0;}
+  .step>li::before{counter-increment:step;content:counter(step);position:absolute;left:0;top:4px;
+       width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;
+       display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;}
+  .pill{display:inline-block;background:#ece6da;border-radius:20px;padding:2px 12px;font-size:13px;margin:2px 4px 2px 0;}
+  .filetree{background:#2c2722;color:#e8ddca;border-radius:10px;padding:16px 20px;font-family:Consolas,monospace;font-size:14px;line-height:1.7;white-space:pre;overflow:auto;}
+  footer{color:var(--muted);font-size:13px;margin-top:60px;border-top:1px solid var(--line);padding-top:16px;}
+  @media(max-width:860px){nav{display:none}.wrap{padding:0 16px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<nav>
+  <h2>Cuprins</h2>
+  <a href="#start">1. Pornirea kioskului</a>
+  <a href="#two">2. Cele două versiuni</a>
+  <a href="#pages">3. Cum funcționează paginile</a>
+  <a href="#editpages">4. Adăugare / înlocuire / ștergere</a>
+  <a href="#pdf">5. Importarea unui PDF</a>
+  <a href="#lang">6. Limbi</a>
+  <a href="#dev">7. Panoul de dezvoltare (3D)</a>
+  <a href="#deploy">8. Salvarea setărilor</a>
+  <a href="#visitor">9. Ce fac vizitatorii</a>
+  <a href="#trouble">10. Depanare</a>
+  <a href="#cheat">11. Foaie rapidă</a>
+</nav>
+
+<main>
+<header class="hero">
+  <div style="float:right"><a href="admin-guide.html" style="color:#ffd9a8;font-size:14px;">English →</a></div>
+  <h1>Carte Kiosk — Ghid Administrator</h1>
+  <p>Tot ce ai nevoie pentru a porni, actualiza și personaliza cartea pe ecran tactil. Fără cunoștințe de programare.</p>
+</header>
+
+<div class="note">
+  <b>De știut de la început:</b> tot kioskul funcționează <b>complet offline</b> — nu are nevoie
+  niciodată de internet. Lucrezi mereu doar cu două lucruri: <b>imaginile paginilor</b> (în foldere)
+  și un <b>fișier de setări</b> opțional. Atât.
+</div>
+
+<!-- 1 -->
+<h2 class="sec" id="start">1. Pornirea kioskului</h2>
+<p>În folderul proiectului găsești două fișiere de pornire. Dă dublu-clic pe cel dorit:</p>
+<table>
+  <tr><th>Fișier</th><th>Deschide</th><th>Adresă</th></tr>
+  <tr><td><code>start.bat</code></td><td>Cartea <b>3D</b> (carte pe masă, răsfoire în 3D)</td><td><code>http://localhost:8080</code></td></tr>
+  <tr><td><code>start-light.bat</code></td><td>Cartea <b>light</b> (plată, mai rapidă, mai simplă)</td><td><code>http://localhost:8081/book-light.html</code></td></tr>
+</table>
+<p>Se deschide automat o fereastră de browser. Atinge (sau dă clic) pe <b>„Touch to Begin”</b> —
+cartea trece pe <b>tot ecranul</b> și pornește muzica de fundal.</p>
+<div class="tip"><b>Sfat:</b> pentru a ieși din modul ecran complet, apasă <kbd>Esc</kbd>. Pentru a opri
+complet kioskul, închide fereastra neagră deschisă odată cu browserul.</div>
+<div class="warn"><b>Important:</b> pornește mereu cu fișierul <code>.bat</code>. Dacă deschizi direct
+fișierul <code>.html</code> (dublu-clic), <u>nu</u> va funcționa corect — ecranul complet și unele
+imagini nu se vor încărca.</div>
+
+<!-- 2 -->
+<h2 class="sec" id="two">2. Cele două versiuni</h2>
+<table>
+  <tr><th></th><th>Cartea 3D (<code>index.html</code>)</th><th>Cartea light (<code>book-light.html</code>)</th></tr>
+  <tr><td><b>Aspect</b></td><td>Carte 3D realistă pe masă, cu obiecte (lampă, plantă…)</td><td>Plată, răsfoire clasică</td></tr>
+  <tr><td><b>Limbi</b></td><td>Engleză + Română (butoane pe ecran)</td><td>Doar Română</td></tr>
+  <tr><td><b>Panou de dezvoltare</b></td><td>Da (apasă <kbd>D</kbd>)</td><td>Nu</td></tr>
+  <tr><td><b>Import PDF</b></td><td>Da (în panoul dev)</td><td>—</td></tr>
+  <tr><td><b>Formate pagini</b></td><td>Imagini <b>și video</b> (MP4/WEBM)</td><td>Doar imagini</td></tr>
+  <tr><td><b>Prima pagină</b></td><td>Începe la <code>page-01</code></td><td>Începe la <code>page-02</code> (page-01 este ignorată)</td></tr>
+</table>
+<p>Ambele versiuni citesc <b>aceleași foldere de pagini</b>, deci o pagină adăugată apare în
+amândouă (cu excepția page-01, pe care versiunea light o ignoră intenționat).</p>
+
+<!-- 3 -->
+<h2 class="sec" id="pages">3. Cum funcționează paginile</h2>
+<p>Paginile cărții sunt pur și simplu <b>fișiere imagine într-un folder</b>, încărcate <b>în ordinea numerelor</b>.</p>
+<div class="filetree">assets/
+└─ pages/
+   ├─ en/                ← pagini în Engleză
+   │   ├─ page-01.jpg
+   │   ├─ page-02.jpg
+   │   └─ page-03.jpg …
+   └─ ro/                ← pagini în Română
+       ├─ page-01.jpg
+       ├─ page-02.jpg
+       └─ page-03.jpg …</div>
+
+<h3>Reguli de denumire</h3>
+<ul>
+  <li>Întotdeauna <code>page-</code> urmat de număr: <code>page-01.jpg</code>, <code>page-02.jpg</code>, … <code>page-99.jpg</code>, <code>page-100.jpg</code>, <code>page-200.jpg</code>.</li>
+  <li>Numerele sub 10 folosesc un zero în față: <code>page-01</code>, nu <code>page-1</code>.</li>
+  <li>Tipuri de imagine acceptate: <span class="pill">.jpg</span><span class="pill">.jpeg</span><span class="pill">.png</span>. Cartea 3D acceptă și pagini video: <span class="pill">.mp4</span><span class="pill">.webm</span>.</li>
+</ul>
+
+<h3>Ordinea de încărcare și golurile</h3>
+<ul>
+  <li>Paginile se încarcă de la <code>page-01</code> în sus, în ordine.</li>
+  <li><b>Un număr lipsă este OK</b> — cartea îl sare și continuă (tolerează până la <b>5 numere lipsă la rând</b> înainte de a considera că s-a terminat cartea).</li>
+  <li>Pentru a <b>termina</b> cartea, oprește numerotarea — după 5 numere goale la rând se oprește căutarea.</li>
+</ul>
+<div class="note"><b>De ce cartea 3D începe la page-01, iar cea light la page-02?</b>
+Versiunea light este setată să ignore <code>page-01</code> intenționat (de ex. o copertă pe care
+doar versiunea 3D ar trebui să o arate). Tot ce e de la <code>page-02</code> în sus apare în amândouă.</div>
+
+<!-- 4 -->
+<h2 class="sec" id="editpages">4. Adăugare, înlocuire sau ștergere de pagini</h2>
+
+<h3>Adaugă o pagină la final</h3>
+<ol class="step">
+  <li>Deschide folderul <span class="path">assets/pages/ro/</span> (sau <code>/en/</code>).</li>
+  <li>Pune imaginea, denumită cu următorul număr (dacă ultima e <code>page-40.jpg</code>, adaugă <code>page-41.jpg</code>).</li>
+  <li>Reîncarcă pagina kioskului în browser (vezi nota de mai jos).</li>
+</ol>
+
+<h3>Înlocuiește o pagină</h3>
+<p>Pune noua imagine în folder cu <b>același nume de fișier</b> (de ex. suprascrie <code>page-12.jpg</code>).</p>
+
+<h3>Șterge o pagină</h3>
+<p>Șterge fișierul. Cartea va sări acel număr (datorită toleranței la goluri), deci nu trebuie să
+renumerotezi totul.</p>
+
+<h3>Inserează o pagină la mijloc</h3>
+<p>Fie renumerotezi fișierele următoare, fie ceri dezvoltatorului să activeze opțiunea „manifest”,
+care permite controlul ordinii exacte fără renumerotare.</p>
+
+<div class="warn"><b>După modificarea fișierelor, reîncarcă browserul:</b>
+<ul>
+  <li><b>Cartea light</b> — o reîncărcare normală (<kbd>F5</kbd>) este suficientă; încarcă mereu cele mai noi imagini.</li>
+  <li><b>Cartea 3D</b> — fă o <b>reîncărcare forțată</b>: <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd>. (O reîncărcare simplă poate arăta imaginea veche din cache.)</li>
+</ul></div>
+<div class="tip"><b>Apare o pagină albă/goală?</b> Înseamnă că există un fișier imagine gol cu acel
+număr. Pur și simplu șterge acel fișier din folder.</div>
+
+<!-- 5 -->
+<h2 class="sec" id="pdf">5. Importarea unui PDF (transformă un PDF în pagini)</h2>
+<p>Cartea 3D are un convertor încorporat care transformă un PDF în fișiere <code>page-NN.jpg</code> pentru tine.</p>
+<ol class="step">
+  <li>Deschide cartea 3D (<code>start.bat</code>).</li>
+  <li>Apasă <kbd>D</kbd> pentru a deschide panoul de dezvoltare, apoi apasă fila <b>PDF</b>.</li>
+  <li>Apasă <b>PDF file</b> și alege PDF-ul. Se afișează câte pagini are.</li>
+  <li><b>From page</b> — prima pagină din PDF de convertit (folosește pentru a sări paginile goale de la început; lasă 1 pentru toate).</li>
+  <li><b>Output start number</b> — numărul de la care să înceapă salvarea (de ex. <code>1</code> → creează <code>page-01.jpg</code>).</li>
+  <li>Lasă <b>Render scale</b> și <b>JPEG quality</b> așa cum sunt (mai mare = mai clar, dar fișiere mai mari).</li>
+  <li>Apasă <b>„Choose folder &amp; convert →”</b>, apoi alege folderul <span class="path">assets/pages/ro</span> (sau <code>/en</code>).</li>
+  <li>Urmărește linia de progres. Când scrie „Done”, reîncarcă cartea.</li>
+</ol>
+<div class="warn"><b>Notă browser:</b> salvarea direct în folder funcționează doar în <b>Google Chrome</b>
+sau <b>Microsoft Edge</b>. (Acestea sunt oricum browserele recomandate pentru kiosk.)</div>
+<div class="tip"><b>Convertește de la „From page” până la finalul PDF-ului.</b> Dacă PDF-ul începe cu
+pagini goale, setează <b>From page</b> la prima pagină reală pentru ca să nu se deschidă pe o pagină goală.</div>
+
+<!-- 6 -->
+<h2 class="sec" id="lang">6. Limbi</h2>
+<ul>
+  <li>Paginile stau în două foldere: <span class="path">assets/pages/en/</span> și <span class="path">assets/pages/ro/</span>.</li>
+  <li><b>Cartea 3D</b> afișează butoanele <b>EN / RO</b> pentru ca vizitatorii să poată schimba limba.</li>
+  <li><b>Cartea light</b> este <b>doar în Română</b>.</li>
+  <li>Limba cu care <b>pornește</b> kioskul este setată în fișierul de setări
+      <span class="path">assets/user-config.json</span> (linia <code>"book-lang": "ro"</code>).
+      Aceasta are mereu prioritate la pornire, deci kioskul se deschide sigur în limba aleasă.</li>
+</ul>
+<div class="tip">Pentru a schimba limba implicită de pornire, deschide <code>assets/user-config.json</code>
+în Notepad și setează <code>"book-lang"</code> la <code>"ro"</code> sau <code>"en"</code>, apoi salvează.</div>
+
+<!-- 7 -->
+<h2 class="sec" id="dev">7. Panoul de dezvoltare (doar cartea 3D)</h2>
+<p>Apasă <kbd>D</kbd> oricând pentru a deschide sau închide panoul. Apasă pe filele de sus pentru
+a schimba secțiunea. Mai jos este explicată fiecare setare. După ajustare, nu uita să apeși
+<b>Save All</b> (secțiunea 8) pentru a păstra modificările.</p>
+<div class="tip"><b>Te-ai pierdut?</b> Dacă schimbi ceva și arată greșit, butonul
+<b>fila UI → Reset settings</b> readuce valorile implicite.</div>
+
+<h3>CAM — cameră și unghi de vizualizare</h3>
+<p>Setează cum este încadrată cartea pe ecran. <b>Trage</b> pentru a roti, <b>scroll</b> pentru zoom.</p>
+<table>
+  <tr><th>Setare</th><th>Ce face</th></tr>
+  <tr><td><b>pos / look</b></td><td>Afișează poziția și ținta camerei (doar informativ).</td></tr>
+  <tr><td><b>FPS</b></td><td>Indicator cadre-pe-secundă — util pentru performanță. Țintește 30+.</td></tr>
+  <tr><td><b>FOV</b></td><td>Unghiul de vizualizare (10–120). Mai mic = mai „plat/apropiat”, mai mare = mai larg/cu mai multă perspectivă.</td></tr>
+  <tr><td><b>→ Work / → Attract</b></td><td>Mută camera la vederea salvată <b>Work</b> (citire) sau <b>Attract</b> (inactiv/screensaver).</td></tr>
+  <tr><td><b>Save as Work / Attract position</b></td><td>Încadrează cartea cum vrei, apoi salvează ca vederea Work sau Attract.</td></tr>
+  <tr><td><b>Test attract transition</b></td><td>Previzualizează tranziția animată de la citire la vederea inactivă.</td></tr>
+  <tr><td><b>Reset saved positions</b></td><td>Resetează vederile salvate la valorile implicite.</td></tr>
+</table>
+
+<h3>SCENE — iluminare și obiecte</h3>
+<table>
+  <tr><th>Setare</th><th>Ce face</th></tr>
+  <tr><td><b>Move / Rotate / Scale</b></td><td>Alege un instrument, apoi trage de mânerele de pe ecran pentru a muta, roti sau redimensiona obiectul selectat.</td></tr>
+  <tr><td><b>Local / None</b></td><td><b>Local</b> schimbă orientarea mânerelor; <b>None</b> oprește mânerele și revine la rotirea camerei.</td></tr>
+  <tr><td><b>Ambient</b></td><td>Lumina de umplere generală (0–2). Crește pentru a lumina totul uniform.</td></tr>
+  <tr><td><b>Key light</b></td><td>Lumina principală direcțională (0–3). Adaugă reflexe/umbre și senzație de adâncime.</td></tr>
+  <tr><td><b>Scene objects (listă)</b></td><td>Alege un obiect decorativ (lampă, plantă, cărți, ceașcă, stilouri…).</td></tr>
+  <tr><td><b>Add to scene / Clear all</b></td><td>Adaugă obiectul ales sau elimină toate obiectele. Lista de dedesubt permite selectarea/eliminarea individuală.</td></tr>
+</table>
+<div class="note">Obiectele sunt modele 3D decorative din jurul cărții. Poziția lor se salvează cu
+<b>Save All</b> și se exportă în config, deci scena arată la fel la fiecare pornire.</div>
+
+<h3>AUDIO — sunet și sincronizarea răsfoirii</h3>
+<table>
+  <tr><th>Setare</th><th>Ce face</th></tr>
+  <tr><td><b>Music vol</b></td><td>Volumul muzicii de fundal (0–1).</td></tr>
+  <tr><td><b>Flip vol</b></td><td>Volumul sunetului de întoarcere a paginii.</td></tr>
+  <tr><td><b>Land vol</b></td><td>Volumul sunetului de „așezare” a paginii la finalul răsfoirii.</td></tr>
+  <tr><td><b>Land early ms</b></td><td>Cu câte milisecunde înainte de finalul răsfoirii se redă sunetul de așezare (pentru sincronizare cu animația).</td></tr>
+  <tr><td><b>Curl lag</b></td><td>Cât de mult se îndoaie/„rămâne în urmă” pagina la întoarcere (0 = rigid, mai mare = senzație de hârtie mai moale).</td></tr>
+  <tr><td><b>Flip ms</b></td><td>Cât durează o răsfoire, în milisecunde (mai mic = întoarceri mai rapide).</td></tr>
+  <tr><td><b>Attract ms</b></td><td>Durata tranziției camerei spre vederea inactivă/attract.</td></tr>
+</table>
+
+<h3>VISUAL — calitatea imaginii și efecte</h3>
+<table>
+  <tr><th>Setare</th><th>Ce face</th></tr>
+  <tr><td><b>Exposure</b></td><td>Luminozitatea generală a scenei 3D (0–3).</td></tr>
+  <tr><td><b>Saturation</b></td><td>Intensitatea culorilor (0 = gri, 1 = normal, 2 = viu).</td></tr>
+  <tr><td><b>Contrast</b></td><td>Diferența dintre zonele luminoase și cele întunecate.</td></tr>
+  <tr><td><b>Tone mapping</b></td><td>„Look-ul de film” al scenei: <b>None</b>, <b>Reinhard</b>, <b>Cineon</b> sau <b>ACES</b> (implicit, cel mai cinematic). <i>Notă: paginile cărții ignoră această setare, ca să arate mereu fidel imaginii originale.</i></td></tr>
+  <tr><td><b>Shadows</b></td><td>OFF / Low / Med / High. Mai mare = umbre mai frumoase dar mai lent. OFF e cel mai rapid.</td></tr>
+  <tr><td><b>Resolution</b></td><td>Claritatea randării: 0.75× (cel mai rapid) · 1× · 1.5× (cel mai clar). Scade-o prima dacă kioskul e lent.</td></tr>
+  <tr><td><b>Fog</b> + density</td><td>Adaugă o ceață ușoară care se pierde în fundal.</td></tr>
+  <tr><td><b>Vignette</b> + strength</td><td>Întunecă marginile ecranului pentru focalizare.</td></tr>
+  <tr><td><b>Film grain</b> + strength</td><td>Textură fină de zgomot, ca de film.</td></tr>
+  <tr><td><b>Edge blur</b> + strength</td><td>Înmoaie marginile ecranului.</td></tr>
+  <tr><td><b>Bloom</b> + radius + strength</td><td>Strălucire difuză în jurul zonelor luminoase (de ex. lampa).</td></tr>
+</table>
+<div class="warn"><b>Performanță:</b> dacă cartea 3D se mișcă sacadat, scade <b>Resolution</b>, pune
+<b>Shadows</b> pe OFF/Low și oprește <b>Bloom</b>/<b>Film grain</b>/<b>Edge blur</b>. Apoi Save All.</div>
+
+<h3>UI — limbă, navigare și mărimea paginii</h3>
+<table>
+  <tr><th>Setare</th><th>Ce face</th></tr>
+  <tr><td><b>Language switcher</b></td><td>Afișează sau ascunde butoanele EN/RO pentru vizitatori.</td></tr>
+  <tr><td><b>Navigation mode</b></td><td><b>Arrows</b> = butoane Înapoi/Înainte (cel mai simplu). <b>Page buttons</b> = butoane numerotate, care devin automat un <b>cursor glisant</b> cu eticheta „page X / total” când sunt multe pagini.</td></tr>
+  <tr><td><b>Width / Height</b></td><td>Proporțiile paginilor pe ecran.</td></tr>
+  <tr><td><b>Segments</b></td><td>Cât de fin se îndoaie pagina la răsfoire (mai mare = îndoire mai lină, ușor mai lent). 28 este o valoare bună.</td></tr>
+  <tr><td><b>Rebuild pages</b></td><td>Reaplică modificările de mărime/segmente la carte.</td></tr>
+  <tr><td><b>Reset settings</b></td><td>Readuce toate setările dev la valorile implicite.</td></tr>
+</table>
+
+<h3>PDF — importă un PDF</h3>
+<p>Transformă un PDF în imagini de pagină. Vezi <a href="#pdf">secțiunea 5</a> pentru pașii compleți.</p>
+
+<!-- 8 -->
+<h2 class="sec" id="deploy">8. Salvarea setărilor (ca să rămână permanente)</h2>
+<p>Modificările făcute în panoul dev sunt reținute <b>pe acel calculator</b> când apeși
+<b>Save All</b>. Pentru a le face <b>implicite permanente</b> pentru kiosk (și pentru orice alt calculator):</p>
+<ol class="step">
+  <li>Reglează totul cum dorești în panoul dev.</li>
+  <li>Apasă <b>Save All</b>.</li>
+  <li>Apasă <b>Export Config ↓</b> — se descarcă un fișier numit <code>user-config.json</code>.</li>
+  <li>Copiază acel fișier în folderul <span class="path">assets/</span> al proiectului, înlocuind
+      vechiul <code>user-config.json</code>.</li>
+</ol>
+<p>De atunci, fiecare pornire folosește automat acele setări.</p>
+
+<!-- 9 -->
+<h2 class="sec" id="visitor">9. Ce fac vizitatorii</h2>
+<ul>
+  <li><b>Ating „Touch to Begin”</b> pentru a porni (trece pe tot ecranul).</li>
+  <li><b>Ating jumătatea stângă</b> a cărții pentru a merge înapoi o pagină, <b>jumătatea dreaptă</b> pentru înainte.</li>
+  <li>Folosesc <b>săgețile</b> de pe ecran sau <b>cursorul glisant</b> (dacă e activat) pentru a sări printre pagini.</li>
+  <li>(doar 3D) Ating <b>EN / RO</b> pentru a schimba limba.</li>
+</ul>
+
+<!-- 10 -->
+<h2 class="sec" id="trouble">10. Depanare</h2>
+<table>
+  <tr><th>Problemă</th><th>Soluție</th></tr>
+  <tr><td>O imagine veche apare în continuare după ce am înlocuit-o</td>
+      <td>Reîncărcare forțată a cărții 3D: <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd>. Cartea light se actualizează cu o reîncărcare normală.</td></tr>
+  <tr><td>Apare o pagină albă / goală</td>
+      <td>Există un fișier imagine gol cu acel număr — șterge-l din folderul de pagini.</td></tr>
+  <tr><td>Cartea se oprește mai devreme decât mă așteptam</td>
+      <td>Verifică numerotarea fișierelor. Mai mult de <b>5 numere lipsă la rând</b> termină cartea. Păstrează numerele continue (un singur gol este OK).</td></tr>
+  <tr><td>S-a deschis în limba greșită</td>
+      <td>Setează <code>"book-lang"</code> în <span class="path">assets/user-config.json</span> la <code>"ro"</code> sau <code>"en"</code>.</td></tr>
+  <tr><td>Ecranul complet / imaginile nu au funcționat</td>
+      <td>Asigură-te că ai pornit cu fișierul <code>.bat</code>, nu deschizând direct HTML-ul.</td></tr>
+  <tr><td>Convertorul PDF nu poate salva în folder</td>
+      <td>Folosește Google Chrome sau Microsoft Edge.</td></tr>
+  <tr><td>Kioskul pare lent (3D)</td>
+      <td>În panoul dev → fila VISUAL, scade calitatea/efectele, apoi Save All.</td></tr>
+</table>
+
+<!-- 11 -->
+<h2 class="sec" id="cheat">11. Foaie rapidă de referință</h2>
+<table>
+  <tr><th>Vreau să…</th><th>Fac asta</th></tr>
+  <tr><td>Pornesc cartea 3D</td><td>Dublu-clic pe <code>start.bat</code></td></tr>
+  <tr><td>Pornesc cartea light</td><td>Dublu-clic pe <code>start-light.bat</code></td></tr>
+  <tr><td>Deschid / închid uneltele dev</td><td>Apasă <kbd>D</kbd> (cartea 3D)</td></tr>
+  <tr><td>Adaug pagini</td><td>Pun <code>page-NN.jpg</code> în <span class="path">assets/pages/ro/</span></td></tr>
+  <tr><td>Convertesc un PDF</td><td>Panoul dev → fila <b>PDF</b></td></tr>
+  <tr><td>Schimb limba de pornire</td><td>Editez <code>"book-lang"</code> în <code>assets/user-config.json</code></td></tr>
+  <tr><td>Fac setările permanente</td><td>Dev → <b>Save All</b> → <b>Export Config</b> → înlocuiesc <code>assets/user-config.json</code></td></tr>
+  <tr><td>Reîncarc după modificări</td><td><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd> (3D), <kbd>F5</kbd> (light)</td></tr>
+</table>
+
+<footer>
+  Carte Kiosk — Ghid Administrator · Funcționează complet offline · Paginile stau în
+  <code>assets/pages/&lt;limbă&gt;/</code> · Setările stau în <code>assets/user-config.json</code>.
+</footer>
+
+</main>
+</div>
+</body>
+</html>

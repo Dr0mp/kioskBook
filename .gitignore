@@ -1,0 +1,33 @@
+# ─────────────────────────────────────────────────────────────
+#  Carte Touch — what NOT to commit
+# ─────────────────────────────────────────────────────────────
+
+# Page content — large, swapped per deployment. The empty folders are kept
+# (via .gitkeep) so the app's structure is clear; drop the page-NN.jpg files
+# into them on the kiosk machine.
+assets/pages/en/*
+assets/pages/ro/*
+!assets/pages/en/.gitkeep
+!assets/pages/ro/.gitkeep
+!assets/pages/PAges.txt
+
+# turn.js demo samples — not used by the app (only trunjs4/lib + trunjs4/extras are)
+trunjs4/samples/
+
+# Source PDFs (originals you convert from — not needed in the repo)
+*.pdf
+
+# Per-machine settings written at runtime (the bundled assets/user-config.json
+# stays tracked as the default; this is only if one is exported to the root)
+/user-config*.json
+
+# Dependencies / build leftovers
+node_modules/
+package.json
+package-lock.json
+
+# OS / editor junk
+Thumbs.db
+.DS_Store
+desktop.ini
+*.log

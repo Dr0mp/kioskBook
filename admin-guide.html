@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kiosk Book — Admin Guide</title>
+<style>
+  :root{
+    --bg:#f6f4ef; --card:#fff; --ink:#23201c; --muted:#6b655c;
+    --accent:#9a6b3f; --accent2:#3a6ea5; --line:#e4ded3; --code:#f0ece2;
+    --warn:#b4521f; --ok:#3c7a4e;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:16px/1.6 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;}
+  .wrap{display:flex;max-width:1180px;margin:0 auto;gap:32px;padding:0 24px;}
+  /* Sidebar TOC */
+  nav{position:sticky;top:0;align-self:flex-start;height:100vh;overflow:auto;
+      width:240px;flex:0 0 240px;padding:28px 0;}
+  nav h2{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 10px;}
+  nav a{display:block;color:var(--ink);text-decoration:none;padding:5px 10px;border-radius:6px;font-size:14.5px;}
+  nav a:hover{background:#ece6da;}
+  /* Content */
+  main{flex:1;min-width:0;padding:36px 0 120px;}
+  header.hero{background:linear-gradient(135deg,#2c2722,#574733);color:#fff;
+       border-radius:16px;padding:34px 36px;margin-bottom:34px;}
+  header.hero h1{margin:0 0 6px;font-size:30px;}
+  header.hero p{margin:0;color:#e8ddca;}
+  h2.sec{font-size:23px;margin:46px 0 14px;padding-bottom:8px;border-bottom:2px solid var(--line);}
+  h3{font-size:18px;margin:26px 0 8px;color:#33598a;}
+  p,li{color:var(--ink);}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 22px;margin:14px 0;}
+  code,kbd{background:var(--code);border-radius:5px;padding:2px 7px;font-family:Consolas,Menlo,monospace;font-size:14px;}
+  kbd{border:1px solid #cfc7b8;border-bottom-width:2px;}
+  .path{color:var(--accent);font-weight:600;}
+  table{border-collapse:collapse;width:100%;margin:12px 0;background:#fff;border-radius:10px;overflow:hidden;}
+  th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top;font-size:15px;}
+  th{background:#efe9dd;font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:#5f584d;}
+  tr:last-child td{border-bottom:none;}
+  .tip,.warn,.note{border-left:4px solid;border-radius:8px;padding:12px 16px;margin:14px 0;}
+  .tip{background:#eef6f0;border-color:var(--ok);}
+  .warn{background:#fbf0e9;border-color:var(--warn);}
+  .note{background:#eef2f8;border-color:var(--accent2);}
+  .tip b,.ok{color:var(--ok)} .warn b{color:var(--warn)}
+  ol,ul{padding-left:22px;} li{margin:4px 0;}
+  .step{counter-reset:step;list-style:none;padding-left:0;}
+  .step>li{position:relative;padding:6px 0 6px 44px;margin:8px 0;}
+  .step>li::before{counter-increment:step;content:counter(step);position:absolute;left:0;top:4px;
+       width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;
+       display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;}
+  .pill{display:inline-block;background:#ece6da;border-radius:20px;padding:2px 12px;font-size:13px;margin:2px 4px 2px 0;}
+  .filetree{background:#2c2722;color:#e8ddca;border-radius:10px;padding:16px 20px;font-family:Consolas,monospace;font-size:14px;line-height:1.7;white-space:pre;overflow:auto;}
+  footer{color:var(--muted);font-size:13px;margin-top:60px;border-top:1px solid var(--line);padding-top:16px;}
+  @media(max-width:860px){nav{display:none}.wrap{padding:0 16px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<nav>
+  <h2>Contents</h2>
+  <a href="#start">1. Starting the kiosk</a>
+  <a href="#two">2. The two versions</a>
+  <a href="#pages">3. How pages work</a>
+  <a href="#editpages">4. Add / replace / remove pages</a>
+  <a href="#pdf">5. Import a PDF</a>
+  <a href="#lang">6. Languages</a>
+  <a href="#dev">7. Developer panel (3D)</a>
+  <a href="#deploy">8. Saving your settings</a>
+  <a href="#visitor">9. What visitors do</a>
+  <a href="#trouble">10. Troubleshooting</a>
+  <a href="#cheat">11. Quick cheat-sheet</a>
+</nav>
+
+<main>
+<header class="hero">
+  <div style="float:right"><a href="admin-guide-ro.html" style="color:#ffd9a8;font-size:14px;">Română →</a></div>
+  <h1>Kiosk Book — Admin Guide</h1>
+  <p>Everything you need to run, update, and customise the touchscreen book. No coding required.</p>
+</header>
+
+<div class="note">
+  <b>Good to know first:</b> The whole kiosk runs <b>fully offline</b> — it never needs the internet.
+  You only ever work with two things: the <b>page images</b> (in folders) and an optional
+  <b>settings file</b>. That's it.
+</div>
+
+<!-- 1 -->
+<h2 class="sec" id="start">1. Starting the kiosk</h2>
+<p>In the project folder you'll find two start files. Double-click the one you want:</p>
+<table>
+  <tr><th>File</th><th>Opens</th><th>Address</th></tr>
+  <tr><td><code>start.bat</code></td><td>The <b>3D book</b> (book on a table, page-flip in 3D)</td><td><code>http://localhost:8080</code></td></tr>
+  <tr><td><code>start-light.bat</code></td><td>The <b>light book</b> (flat, faster, simpler)</td><td><code>http://localhost:8081/book-light.html</code></td></tr>
+</table>
+<p>A browser window opens automatically. Tap (or click) <b>“Touch to Begin”</b> — the book goes
+<b>full-screen</b> and the background music starts.</p>
+<div class="tip"><b>Tip:</b> To close full-screen, press <kbd>Esc</kbd>. To stop the kiosk completely,
+close the small black window that opened with the browser.</div>
+<div class="warn"><b>Important:</b> Always start with the <code>.bat</code> file. Opening the
+<code>.html</code> file directly (double-click) will <u>not</u> work properly — full-screen and
+some images won't load.</div>
+
+<!-- 2 -->
+<h2 class="sec" id="two">2. The two versions</h2>
+<table>
+  <tr><th></th><th>3D book (<code>index.html</code>)</th><th>Light book (<code>book-light.html</code>)</th></tr>
+  <tr><td><b>Look</b></td><td>Realistic 3D book on a table with props (lamp, plant…)</td><td>Flat, classic page-flip</td></tr>
+  <tr><td><b>Languages</b></td><td>English + Romanian (on-screen buttons)</td><td>Romanian only</td></tr>
+  <tr><td><b>Developer panel</b></td><td>Yes (press <kbd>D</kbd>)</td><td>No</td></tr>
+  <tr><td><b>PDF importer</b></td><td>Yes (in the dev panel)</td><td>—</td></tr>
+  <tr><td><b>Page formats</b></td><td>Images <b>and video</b> (MP4/WEBM)</td><td>Images only</td></tr>
+  <tr><td><b>First page</b></td><td>Starts at <code>page-01</code></td><td>Starts at <code>page-02</code> (page-01 is skipped)</td></tr>
+</table>
+<p>Both versions read the <b>same page folders</b>, so a page you add appears in both
+(except page-01, which the light version intentionally ignores).</p>
+
+<!-- 3 -->
+<h2 class="sec" id="pages">3. How pages work</h2>
+<p>The book's pages are simply <b>image files in a folder</b>, loaded <b>in number order</b>.</p>
+<div class="filetree">assets/
+└─ pages/
+   ├─ en/                ← English pages
+   │   ├─ page-01.jpg
+   │   ├─ page-02.jpg
+   │   └─ page-03.jpg …
+   └─ ro/                ← Romanian pages
+       ├─ page-01.jpg
+       ├─ page-02.jpg
+       └─ page-03.jpg …</div>
+
+<h3>Naming rules</h3>
+<ul>
+  <li>Always <code>page-</code> followed by the number: <code>page-01.jpg</code>, <code>page-02.jpg</code>, … <code>page-99.jpg</code>, <code>page-100.jpg</code>, <code>page-200.jpg</code>.</li>
+  <li>Numbers below 10 use a leading zero: <code>page-01</code>, not <code>page-1</code>.</li>
+  <li>Accepted image types: <span class="pill">.jpg</span><span class="pill">.jpeg</span><span class="pill">.png</span>. The 3D book also accepts video pages: <span class="pill">.mp4</span><span class="pill">.webm</span>.</li>
+</ul>
+
+<h3>Loading order &amp; gaps</h3>
+<ul>
+  <li>Pages load from <code>page-01</code> upward, in order.</li>
+  <li><b>A missing number is OK</b> — the book skips it and keeps going (it tolerates up to <b>5 missing numbers in a row</b> before it assumes the book has ended).</li>
+  <li>To <b>end</b> the book, just stop numbering — after 5 blank numbers in a row it stops looking.</li>
+</ul>
+<div class="note"><b>Why does the 3D book start at page-01 but the light book at page-02?</b>
+The light book is set to ignore <code>page-01</code> on purpose (e.g. a cover that only the 3D
+version should show). Everything from <code>page-02</code> onward appears in both.</div>
+
+<!-- 4 -->
+<h2 class="sec" id="editpages">4. Add, replace, or remove pages</h2>
+
+<h3>Add a page at the end</h3>
+<ol class="step">
+  <li>Open the folder <span class="path">assets/pages/ro/</span> (or <code>/en/</code>).</li>
+  <li>Drop in your image, named with the next number (e.g. if the last is <code>page-40.jpg</code>, add <code>page-41.jpg</code>).</li>
+  <li>Reload the kiosk page in the browser (see note below).</li>
+</ol>
+
+<h3>Replace a page</h3>
+<p>Put the new image in the folder using the <b>same filename</b> (e.g. overwrite <code>page-12.jpg</code>).</p>
+
+<h3>Remove a page</h3>
+<p>Delete the file. The book will simply skip that number (thanks to gap tolerance), so you don't
+have to renumber everything.</p>
+
+<h3>Insert a page in the middle</h3>
+<p>Either renumber the following files, or ask the developer to enable the “manifest” option,
+which lets you control the exact order without renumbering.</p>
+
+<div class="warn"><b>After changing files, refresh the browser:</b>
+<ul>
+  <li><b>Light book</b> — a normal refresh (<kbd>F5</kbd>) is enough; it always loads the newest images.</li>
+  <li><b>3D book</b> — do a <b>hard refresh</b>: <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd>. (A plain refresh can show the old cached image.)</li>
+</ul></div>
+<div class="tip"><b>Blank/white page showing?</b> That means there's an actual blank image file
+with that number. Just delete that file from the folder.</div>
+
+<!-- 5 -->
+<h2 class="sec" id="pdf">5. Import a PDF (turn a PDF into pages)</h2>
+<p>The 3D book has a built-in converter that turns a PDF into <code>page-NN.jpg</code> files for you.</p>
+<ol class="step">
+  <li>Open the 3D book (<code>start.bat</code>).</li>
+  <li>Press <kbd>D</kbd> to open the developer panel, then click the <b>PDF</b> tab.</li>
+  <li>Click <b>PDF file</b> and choose your PDF. It shows how many pages it has.</li>
+  <li><b>From page</b> — the first PDF page to convert (use this to skip blank cover pages; leave at 1 for all).</li>
+  <li><b>Output start number</b> — what page number to start saving at (e.g. <code>1</code> → makes <code>page-01.jpg</code>).</li>
+  <li>Leave <b>Render scale</b> and <b>JPEG quality</b> as they are (higher = sharper but bigger files).</li>
+  <li>Click <b>“Choose folder &amp; convert →”</b>, then pick the folder <span class="path">assets/pages/ro</span> (or <code>/en</code>).</li>
+  <li>Watch the progress line. When it says “Done”, reload the book.</li>
+</ol>
+<div class="warn"><b>Browser note:</b> Saving directly into the folder works in <b>Google Chrome</b>
+or <b>Microsoft Edge</b> only. (These are the recommended kiosk browsers anyway.)</div>
+<div class="tip"><b>It converts from “From page” to the end of the PDF.</b> If your PDF starts with
+blank pages, set <b>From page</b> to the first real page so the book doesn't open on a blank.</div>
+
+<!-- 6 -->
+<h2 class="sec" id="lang">6. Languages</h2>
+<ul>
+  <li>Pages live in two folders: <span class="path">assets/pages/en/</span> and <span class="path">assets/pages/ro/</span>.</li>
+  <li>The <b>3D book</b> shows <b>EN / RO</b> buttons so visitors can switch.</li>
+  <li>The <b>light book</b> is <b>Romanian only</b>.</li>
+  <li>The language the kiosk <b>starts in</b> is set in the settings file
+      <span class="path">assets/user-config.json</span> (the line <code>"book-lang": "ro"</code>).
+      This always wins on launch, so the kiosk reliably opens in the language you chose.</li>
+</ul>
+<div class="tip">To change the default start language, open <code>assets/user-config.json</code> in
+Notepad and set <code>"book-lang"</code> to <code>"ro"</code> or <code>"en"</code>, then save.</div>
+
+<!-- 7 -->
+<h2 class="sec" id="dev">7. Developer panel (3D book only)</h2>
+<p>Press <kbd>D</kbd> at any time to open or close the panel. Click the tabs across the top to
+switch sections. Below is every setting explained. After adjusting, remember to
+<b>Save All</b> (section 8) so your changes are kept.</p>
+<div class="tip"><b>Lost?</b> If you change something and it looks wrong, the
+<b>UI tab → Reset settings</b> button restores the defaults.</div>
+
+<h3>CAM — camera &amp; viewpoint</h3>
+<p>Set how the book is framed on screen. <b>Drag</b> to orbit, <b>scroll</b> to zoom.</p>
+<table>
+  <tr><th>Setting</th><th>What it does</th></tr>
+  <tr><td><b>pos / look</b></td><td>Read-out of the current camera position &amp; aim (just information).</td></tr>
+  <tr><td><b>FPS</b></td><td>Frames-per-second meter — handy to check performance. Aim for 30+.</td></tr>
+  <tr><td><b>FOV</b></td><td>Field of view (10–120). Lower = more “zoomed/flat”, higher = wider/more perspective.</td></tr>
+  <tr><td><b>→ Work / → Attract</b></td><td>Jump the camera to the saved <b>Work</b> view (reading) or <b>Attract</b> view (idle/screensaver).</td></tr>
+  <tr><td><b>Save as Work / Attract position</b></td><td>Frame the book how you like, then save it as the Work or Attract view.</td></tr>
+  <tr><td><b>Test attract transition</b></td><td>Preview the animated move from reading to the idle view.</td></tr>
+  <tr><td><b>Reset saved positions</b></td><td>Clears the saved camera views back to defaults.</td></tr>
+</table>
+
+<h3>SCENE — lighting &amp; objects</h3>
+<table>
+  <tr><th>Setting</th><th>What it does</th></tr>
+  <tr><td><b>Move / Rotate / Scale</b></td><td>Pick a tool, then drag the on-screen handles to move, turn, or resize the selected object.</td></tr>
+  <tr><td><b>Local / None</b></td><td><b>Local</b> switches the handle orientation; <b>None</b> turns the handles off and goes back to orbiting the camera.</td></tr>
+  <tr><td><b>Ambient</b></td><td>Overall fill light (0–2). Raise to brighten everything evenly.</td></tr>
+  <tr><td><b>Key light</b></td><td>Main directional light (0–3). Adds highlights/shadows and a sense of depth.</td></tr>
+  <tr><td><b>Scene objects (dropdown)</b></td><td>Choose a prop (lamp, plant, books, cup, pens…).</td></tr>
+  <tr><td><b>Add to scene / Clear all</b></td><td>Add the chosen prop, or remove all props. The list below lets you select/remove individual ones.</td></tr>
+</table>
+<div class="note">Props are decorative 3D models around the book. Their position is saved with
+<b>Save All</b> and exported in the config, so the scene looks the same every launch.</div>
+
+<h3>AUDIO — sound &amp; flip timing</h3>
+<table>
+  <tr><th>Setting</th><th>What it does</th></tr>
+  <tr><td><b>Music vol</b></td><td>Background music volume (0–1).</td></tr>
+  <tr><td><b>Flip vol</b></td><td>Volume of the page-turn “whoosh” sound.</td></tr>
+  <tr><td><b>Land vol</b></td><td>Volume of the page “landing” sound at the end of a flip.</td></tr>
+  <tr><td><b>Land early ms</b></td><td>How many milliseconds before the flip ends to play the landing sound (sync the sound to the visual).</td></tr>
+  <tr><td><b>Curl lag</b></td><td>How much the page “lags”/curls as it turns (0 = stiff, higher = floppier paper feel).</td></tr>
+  <tr><td><b>Flip ms</b></td><td>How long a page flip takes, in milliseconds (lower = faster turns).</td></tr>
+  <tr><td><b>Attract ms</b></td><td>Length of the camera transition into the idle/attract view.</td></tr>
+</table>
+
+<h3>VISUAL — image quality &amp; effects</h3>
+<table>
+  <tr><th>Setting</th><th>What it does</th></tr>
+  <tr><td><b>Exposure</b></td><td>Overall brightness of the 3D scene (0–3).</td></tr>
+  <tr><td><b>Saturation</b></td><td>Colour intensity (0 = grey, 1 = normal, 2 = vivid).</td></tr>
+  <tr><td><b>Contrast</b></td><td>Difference between lights and darks.</td></tr>
+  <tr><td><b>Tone mapping</b></td><td>The “film look” for the scene: <b>None</b>, <b>Reinhard</b>, <b>Cineon</b>, or <b>ACES</b> (default, most cinematic). <i>Note: the book pages ignore this so they always show true to the original image.</i></td></tr>
+  <tr><td><b>Shadows</b></td><td>OFF / Low / Med / High. Higher = nicer shadows but slower. OFF is fastest.</td></tr>
+  <tr><td><b>Resolution</b></td><td>Render sharpness: 0.75× (fastest) · 1× · 1.5× (sharpest). Lower this first if the kiosk is slow.</td></tr>
+  <tr><td><b>Fog</b> + density</td><td>Adds a soft haze fading into the background.</td></tr>
+  <tr><td><b>Vignette</b> + strength</td><td>Darkens the screen edges for focus.</td></tr>
+  <tr><td><b>Film grain</b> + strength</td><td>Subtle film-like noise texture.</td></tr>
+  <tr><td><b>Edge blur</b> + strength</td><td>Softens the screen edges.</td></tr>
+  <tr><td><b>Bloom</b> + radius + strength</td><td>Soft glow around bright areas (e.g. the lamp).</td></tr>
+</table>
+<div class="warn"><b>Performance:</b> If the 3D book stutters, lower <b>Resolution</b>, set
+<b>Shadows</b> to OFF/Low, and turn off <b>Bloom</b>/<b>Film grain</b>/<b>Edge blur</b>. Then Save All.</div>
+
+<h3>UI — language, navigation &amp; page size</h3>
+<table>
+  <tr><th>Setting</th><th>What it does</th></tr>
+  <tr><td><b>Language switcher</b></td><td>Show or hide the EN/RO buttons for visitors.</td></tr>
+  <tr><td><b>Navigation mode</b></td><td><b>Arrows</b> = Previous/Next buttons (simplest). <b>Page buttons</b> = numbered buttons, which automatically become a <b>draggable slider</b> with a “page X / total” label when there are many pages.</td></tr>
+  <tr><td><b>Width / Height</b></td><td>The proportions of the on-screen pages.</td></tr>
+  <tr><td><b>Segments</b></td><td>How finely the page bends when flipping (higher = smoother curl, slightly slower). 28 is a good default.</td></tr>
+  <tr><td><b>Rebuild pages</b></td><td>Re-applies the size/segment changes to the book.</td></tr>
+  <tr><td><b>Reset settings</b></td><td>Restores all dev settings to defaults.</td></tr>
+</table>
+
+<h3>PDF — import a PDF</h3>
+<p>Turns a PDF into page images. See <a href="#pdf">section 5</a> for the full steps.</p>
+
+<!-- 8 -->
+<h2 class="sec" id="deploy">8. Saving your settings (so they stick)</h2>
+<p>Changes you make in the dev panel are remembered <b>on that computer</b> when you click
+<b>Save All</b>. To make them the <b>permanent default</b> for the kiosk (and any other computer):</p>
+<ol class="step">
+  <li>Adjust everything the way you want in the dev panel.</li>
+  <li>Click <b>Save All</b>.</li>
+  <li>Click <b>Export Config ↓</b> — this downloads a file called <code>user-config.json</code>.</li>
+  <li>Copy that file into the project's <span class="path">assets/</span> folder, replacing the old
+      <code>user-config.json</code>.</li>
+</ol>
+<p>From then on, every launch uses those settings automatically.</p>
+
+<!-- 9 -->
+<h2 class="sec" id="visitor">9. What visitors do</h2>
+<ul>
+  <li><b>Tap “Touch to Begin”</b> to start (goes full-screen).</li>
+  <li><b>Tap the left half</b> of the book to go back a page, <b>the right half</b> to go forward.</li>
+  <li>Use the on-screen <b>arrows</b> or <b>page slider</b> (if enabled) to jump around.</li>
+  <li>(3D only) Tap <b>EN / RO</b> to switch language.</li>
+</ul>
+
+<!-- 10 -->
+<h2 class="sec" id="trouble">10. Troubleshooting</h2>
+<table>
+  <tr><th>Problem</th><th>Fix</th></tr>
+  <tr><td>An old image still shows after I replaced it</td>
+      <td>Hard refresh the 3D book: <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd>. The light book updates with a normal refresh.</td></tr>
+  <tr><td>A white / blank page appears</td>
+      <td>There's a blank image file with that number — delete it from the page folder.</td></tr>
+  <tr><td>The book stops earlier than expected</td>
+      <td>Check the file numbering. More than <b>5 missing numbers in a row</b> ends the book. Keep numbers continuous (a single gap is fine).</td></tr>
+  <tr><td>It opened in the wrong language</td>
+      <td>Set <code>"book-lang"</code> in <span class="path">assets/user-config.json</span> to <code>"ro"</code> or <code>"en"</code>.</td></tr>
+  <tr><td>Full-screen / images didn't work</td>
+      <td>Make sure you launched with the <code>.bat</code> file, not by opening the HTML directly.</td></tr>
+  <tr><td>PDF converter can't save to the folder</td>
+      <td>Use Google Chrome or Microsoft Edge.</td></tr>
+  <tr><td>The kiosk feels slow (3D)</td>
+      <td>In the dev panel → VISUAL tab, lower the quality/effects, then Save All.</td></tr>
+</table>
+
+<!-- 11 -->
+<h2 class="sec" id="cheat">11. Quick cheat-sheet</h2>
+<table>
+  <tr><th>I want to…</th><th>Do this</th></tr>
+  <tr><td>Start the 3D book</td><td>Double-click <code>start.bat</code></td></tr>
+  <tr><td>Start the light book</td><td>Double-click <code>start-light.bat</code></td></tr>
+  <tr><td>Open / close dev tools</td><td>Press <kbd>D</kbd> (3D book)</td></tr>
+  <tr><td>Add pages</td><td>Drop <code>page-NN.jpg</code> into <span class="path">assets/pages/ro/</span></td></tr>
+  <tr><td>Convert a PDF</td><td>Dev panel → <b>PDF</b> tab</td></tr>
+  <tr><td>Change start language</td><td>Edit <code>"book-lang"</code> in <code>assets/user-config.json</code></td></tr>
+  <tr><td>Make my settings permanent</td><td>Dev → <b>Save All</b> → <b>Export Config</b> → replace <code>assets/user-config.json</code></td></tr>
+  <tr><td>Refresh after changes</td><td><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>R</kbd> (3D), <kbd>F5</kbd> (light)</td></tr>
+</table>
+
+<footer>
+  Kiosk Book — Admin Guide · Runs fully offline · Pages live in <code>assets/pages/&lt;language&gt;/</code> ·
+  Settings live in <code>assets/user-config.json</code>.
+</footer>
+
+</main>
+</div>
+</body>
+</html>
