@@ -10,7 +10,7 @@ python3 --version >nul 2>&1 && python3 -m http.server 8081 && goto done
 node    --version >nul 2>&1 && npx serve -l 8081 .         && goto done
 
 echo No Python or Node found. Falling back to PowerShell server...
-powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0server.ps1"
+powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0server.ps1" -Port 8081
 
 :done
 pause

@@ -1,7 +1,8 @@
 # Minimal static file server — no Python or Node required
+# Usage: powershell -File server.ps1 [-Port 8080]
+param([int]$Port = 8080)
 $root = $PSScriptRoot
-$port = 8080
-$prefix = "http://localhost:$port/"
+$prefix = "http://localhost:$Port/"
 
 $mimeTypes = @{
   '.html' = 'text/html'

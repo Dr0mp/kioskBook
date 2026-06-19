@@ -37,16 +37,12 @@ Node.js installed**.
 The `python313/` folder (~21 MB) is included only so the kiosk is fully self-contained. **You can
 delete it** to slim things down — here's what then applies:
 
-- ✅ **It still runs on Windows** with no install, via the PowerShell fallback (`server.ps1`).
-- ⚠ **Port note:** `server.ps1` serves on **port 8080**, which matches the **3D book**
-  (`start.bat`). The **light book** (`start-light.bat`) expects **8081** — so if you rely on the
-  PowerShell fallback for the *light* book, either:
-  - install **Python 3** ([python.org](https://www.python.org/downloads/)) or **Node.js**
-    ([nodejs.org](https://nodejs.org/)) so the launcher uses those on 8081, **or**
-  - ask the developer to make `server.ps1` accept the port (quick change).
-- Optional installs (only if you want options 2 or 3 above):
-  - **Python 3** — tick *“Add Python to PATH”* during setup.
-  - **Node.js** — LTS version.
+- ✅ **It still runs on Windows** with **no install**, via the PowerShell fallback (`server.ps1`).
+  Both launchers pass the correct port to it automatically (3D → 8080, light → 8081), so each book
+  works on its own address.
+- Optional installs (only if you prefer the Python/Node server options 2–3 above):
+  - **Python 3** ([python.org](https://www.python.org/downloads/)) — tick *“Add Python to PATH”*.
+  - **Node.js** ([nodejs.org](https://nodejs.org/)) — LTS version.
 
 > Note: this only concerns the *web server*. The app's own libraries (three.js, turn.js, pdf.js,
 > jQuery) are **bundled** in `lib/` and `trunjs4/` and are **not** something you install.
